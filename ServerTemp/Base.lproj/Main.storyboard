@@ -10,7 +10,7 @@
         <scene sceneID="MNG-GB-uaS">
             <objects>
                 <tableViewController id="TBv-V2-FNh" customClass="SettingsViewController" customModule="ServerTemp" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="interactive" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="mi6-xy-RzA">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" keyboardDismissMode="onDrag" dataMode="prototypes" style="grouped" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="mi6-xy-RzA">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <animations/>
@@ -60,8 +60,15 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="rvO-Z8-g3b">
-                        <barButtonItem key="rightBarButtonItem" title="Сохранить" id="qVx-kh-G2F"/>
+                        <barButtonItem key="rightBarButtonItem" title="Сохранить" id="qVx-kh-G2F">
+                            <connections>
+                                <action selector="saveButtonTapped:" destination="TBv-V2-FNh" id="6M0-A5-qWp"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="saveButton" destination="qVx-kh-G2F" id="cDQ-34-qXC"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9tP-wd-jBA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

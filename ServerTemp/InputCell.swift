@@ -8,6 +8,9 @@
 
 import UIKit
 
+protocol InputCellDelegate {
+    func checkChanges(sender: InputCell)
+}
 
 class InputCell: UITableViewCell, UITextFieldDelegate {
     
@@ -15,9 +18,21 @@ class InputCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet weak var label: UILabel!
     @IBOutlet weak var textField: UITextField!
     
+    var delegate: InputCellDelegate? = nil
+    
     func textFieldShouldReturn(textField: UITextField) -> Bool {
         textField.resignFirstResponder()
         return true
+    }
+    
+    override func prepareForReuse() {
+        delegate = nil
+    }
+    
+    internal func textChanged() {
+        if let del = delegate {
+            del.checkChanges(self)
+        }
     }
     
 }
