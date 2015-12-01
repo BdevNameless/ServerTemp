@@ -14,6 +14,8 @@
 		11344CD91C0D20E20049F287 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11344CD71C0D20E20049F287 /* LaunchScreen.storyboard */; };
 		11344CE41C0D20E20049F287 /* ServerTempTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344CE31C0D20E20049F287 /* ServerTempTests.swift */; };
 		11344CEF1C0D20E20049F287 /* ServerTempUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344CEE1C0D20E20049F287 /* ServerTempUITests.swift */; };
+		11344CFD1C0D22D80049F287 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11344CFC1C0D22D80049F287 /* NetworkExtension.framework */; };
+		11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D011C0D234B0049F287 /* VPNConfiguration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +49,9 @@
 		11344CEA1C0D20E20049F287 /* ServerTempUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ServerTempUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		11344CEE1C0D20E20049F287 /* ServerTempUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerTempUITests.swift; sourceTree = "<group>"; };
 		11344CF01C0D20E20049F287 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		11344CFC1C0D22D80049F287 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
+		11344CFE1C0D22D80049F287 /* ServerTemp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ServerTemp.entitlements; sourceTree = "<group>"; };
+		11344D011C0D234B0049F287 /* VPNConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPNConfiguration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +59,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11344CFD1C0D22D80049F287 /* NetworkExtension.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,6 +83,7 @@
 		11344CC21C0D20E20049F287 = {
 			isa = PBXGroup;
 			children = (
+				11344CFC1C0D22D80049F287 /* NetworkExtension.framework */,
 				11344CCD1C0D20E20049F287 /* ServerTemp */,
 				11344CE21C0D20E20049F287 /* ServerTempTests */,
 				11344CED1C0D20E20049F287 /* ServerTempUITests */,
@@ -97,12 +104,12 @@
 		11344CCD1C0D20E20049F287 /* ServerTemp */ = {
 			isa = PBXGroup;
 			children = (
+				11344CFE1C0D22D80049F287 /* ServerTemp.entitlements */,
 				11344CCE1C0D20E20049F287 /* AppDelegate.swift */,
-				11344CD01C0D20E20049F287 /* ViewController.swift */,
-				11344CD21C0D20E20049F287 /* Main.storyboard */,
-				11344CD51C0D20E20049F287 /* Assets.xcassets */,
-				11344CD71C0D20E20049F287 /* LaunchScreen.storyboard */,
+				11344D001C0D232A0049F287 /* Controllers */,
+				11344CFF1C0D230C0049F287 /* UI */,
 				11344CDA1C0D20E20049F287 /* Info.plist */,
+				11344D011C0D234B0049F287 /* VPNConfiguration.swift */,
 			);
 			path = ServerTemp;
 			sourceTree = "<group>";
@@ -123,6 +130,24 @@
 				11344CF01C0D20E20049F287 /* Info.plist */,
 			);
 			path = ServerTempUITests;
+			sourceTree = "<group>";
+		};
+		11344CFF1C0D230C0049F287 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				11344CD21C0D20E20049F287 /* Main.storyboard */,
+				11344CD51C0D20E20049F287 /* Assets.xcassets */,
+				11344CD71C0D20E20049F287 /* LaunchScreen.storyboard */,
+			);
+			name = UI;
+			sourceTree = "<group>";
+		};
+		11344D001C0D232A0049F287 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				11344CD01C0D20E20049F287 /* ViewController.swift */,
+			);
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -193,6 +218,12 @@
 				TargetAttributes = {
 					11344CCA1C0D20E20049F287 = {
 						CreatedOnToolsVersion = 7.1.1;
+						DevelopmentTeam = 3Q47744PG6;
+						SystemCapabilities = {
+							com.apple.VPNLite = {
+								enabled = 1;
+							};
+						};
 					};
 					11344CDE1C0D20E20049F287 = {
 						CreatedOnToolsVersion = 7.1.1;
@@ -258,6 +289,7 @@
 			files = (
 				11344CD11C0D20E20049F287 /* ViewController.swift in Sources */,
 				11344CCF1C0D20E20049F287 /* AppDelegate.swift in Sources */,
+				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,6 +429,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ServerTemp/ServerTemp.entitlements;
 				INFOPLIST_FILE = ServerTemp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bdevnameless.ServerTemp;
@@ -408,6 +441,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ServerTemp/ServerTemp.entitlements;
 				INFOPLIST_FILE = ServerTemp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.bdevnameless.ServerTemp;
