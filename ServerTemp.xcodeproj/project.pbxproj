@@ -17,6 +17,7 @@
 		11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D011C0D234B0049F287 /* VPNConfiguration.swift */; };
 		11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D031C0D31630049F287 /* SettingsViewController.swift */; };
 		11344D071C0D335D0049F287 /* InputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D061C0D335D0049F287 /* InputCell.swift */; };
+		11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +55,7 @@
 		11344D011C0D234B0049F287 /* VPNConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPNConfiguration.swift; sourceTree = "<group>"; };
 		11344D031C0D31630049F287 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		11344D061C0D335D0049F287 /* InputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputCell.swift; sourceTree = "<group>"; };
+		11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZabbixConfiguration.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +115,7 @@
 				11344CFF1C0D230C0049F287 /* UI */,
 				11344CDA1C0D20E20049F287 /* Info.plist */,
 				11344D011C0D234B0049F287 /* VPNConfiguration.swift */,
+				11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */,
 			);
 			path = ServerTemp;
 			sourceTree = "<group>";
@@ -299,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11344CCF1C0D20E20049F287 /* AppDelegate.swift in Sources */,
+				11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */,
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
 				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
