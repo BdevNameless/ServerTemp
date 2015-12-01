@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		11344CCF1C0D20E20049F287 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344CCE1C0D20E20049F287 /* AppDelegate.swift */; };
-		11344CD11C0D20E20049F287 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344CD01C0D20E20049F287 /* ViewController.swift */; };
 		11344CD41C0D20E20049F287 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11344CD21C0D20E20049F287 /* Main.storyboard */; };
 		11344CD61C0D20E20049F287 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 11344CD51C0D20E20049F287 /* Assets.xcassets */; };
 		11344CD91C0D20E20049F287 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 11344CD71C0D20E20049F287 /* LaunchScreen.storyboard */; };
@@ -16,6 +15,8 @@
 		11344CEF1C0D20E20049F287 /* ServerTempUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344CEE1C0D20E20049F287 /* ServerTempUITests.swift */; };
 		11344CFD1C0D22D80049F287 /* NetworkExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11344CFC1C0D22D80049F287 /* NetworkExtension.framework */; };
 		11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D011C0D234B0049F287 /* VPNConfiguration.swift */; };
+		11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D031C0D31630049F287 /* SettingsViewController.swift */; };
+		11344D071C0D335D0049F287 /* InputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D061C0D335D0049F287 /* InputCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +39,6 @@
 /* Begin PBXFileReference section */
 		11344CCB1C0D20E20049F287 /* ServerTemp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ServerTemp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		11344CCE1C0D20E20049F287 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		11344CD01C0D20E20049F287 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		11344CD31C0D20E20049F287 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		11344CD51C0D20E20049F287 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		11344CD81C0D20E20049F287 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -52,6 +52,8 @@
 		11344CFC1C0D22D80049F287 /* NetworkExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NetworkExtension.framework; path = System/Library/Frameworks/NetworkExtension.framework; sourceTree = SDKROOT; };
 		11344CFE1C0D22D80049F287 /* ServerTemp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = ServerTemp.entitlements; sourceTree = "<group>"; };
 		11344D011C0D234B0049F287 /* VPNConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPNConfiguration.swift; sourceTree = "<group>"; };
+		11344D031C0D31630049F287 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
+		11344D061C0D335D0049F287 /* InputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +108,7 @@
 			children = (
 				11344CFE1C0D22D80049F287 /* ServerTemp.entitlements */,
 				11344CCE1C0D20E20049F287 /* AppDelegate.swift */,
+				11344D051C0D33300049F287 /* Cells */,
 				11344D001C0D232A0049F287 /* Controllers */,
 				11344CFF1C0D230C0049F287 /* UI */,
 				11344CDA1C0D20E20049F287 /* Info.plist */,
@@ -145,9 +148,17 @@
 		11344D001C0D232A0049F287 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				11344CD01C0D20E20049F287 /* ViewController.swift */,
+				11344D031C0D31630049F287 /* SettingsViewController.swift */,
 			);
 			name = Controllers;
+			sourceTree = "<group>";
+		};
+		11344D051C0D33300049F287 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				11344D061C0D335D0049F287 /* InputCell.swift */,
+			);
+			name = Cells;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -287,9 +298,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				11344CD11C0D20E20049F287 /* ViewController.swift in Sources */,
 				11344CCF1C0D20E20049F287 /* AppDelegate.swift in Sources */,
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
+				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
+				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
