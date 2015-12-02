@@ -18,6 +18,7 @@
 		11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D031C0D31630049F287 /* SettingsViewController.swift */; };
 		11344D071C0D335D0049F287 /* InputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D061C0D335D0049F287 /* InputCell.swift */; };
 		11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */; };
+		113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		11344D031C0D31630049F287 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		11344D061C0D335D0049F287 /* InputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputCell.swift; sourceTree = "<group>"; };
 		11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZabbixConfiguration.swift; sourceTree = "<group>"; };
+		113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConnectionViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 			isa = PBXGroup;
 			children = (
 				11344D031C0D31630049F287 /* SettingsViewController.swift */,
+				113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -303,6 +306,7 @@
 			files = (
 				11344CCF1C0D20E20049F287 /* AppDelegate.swift in Sources */,
 				11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */,
+				113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */,
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
 				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
@@ -532,6 +536,7 @@
 				11344CF51C0D20E20049F287 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		11344CF61C0D20E20049F287 /* Build configuration list for PBXNativeTarget "ServerTempTests" */ = {
 			isa = XCConfigurationList;
@@ -540,6 +545,7 @@
 				11344CF81C0D20E20049F287 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		11344CF91C0D20E20049F287 /* Build configuration list for PBXNativeTarget "ServerTempUITests" */ = {
 			isa = XCConfigurationList;
@@ -548,6 +554,7 @@
 				11344CFB1C0D20E20049F287 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

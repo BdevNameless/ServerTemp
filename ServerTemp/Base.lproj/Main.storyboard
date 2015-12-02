@@ -6,6 +6,63 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
+        <!--Test Connection View Controller-->
+        <scene sceneID="TeR-8N-Eu6">
+            <objects>
+                <viewController id="Ma9-Mn-g4h" customClass="TestConnectionViewController" customModule="ServerTemp" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="FOU-fd-XeU"/>
+                        <viewControllerLayoutGuide type="bottom" id="avE-6Q-xXA"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="rhj-Yb-poZ">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NnE-SU-yjt">
+                                <rect key="frame" x="20" y="72" width="560" height="77"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="77" id="K7K-v9-0q4"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
+                                <state key="normal" title="TOTAL CONNECTION">
+                                    <color key="titleColor" red="0.0" green="0.83066263689999997" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="connButtonTapped:" destination="Ma9-Mn-g4h" eventType="touchUpInside" id="x7U-zq-zPY"/>
+                                </connections>
+                            </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dPS-ET-7BI">
+                                <rect key="frame" x="20" y="157" width="560" height="423"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="textColor" red="0.094117656349999995" green="0.75686281919999998" blue="0.082352943720000002" alpha="1" colorSpace="deviceRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                        </subviews>
+                        <animations/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="dPS-ET-7BI" firstAttribute="top" secondItem="NnE-SU-yjt" secondAttribute="bottom" constant="8" id="Gbh-XM-Y6V"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="NnE-SU-yjt" secondAttribute="leading" id="PZf-1k-dop"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="NnE-SU-yjt" secondAttribute="trailing" id="Pwo-XW-hU8"/>
+                            <constraint firstAttribute="leadingMargin" secondItem="dPS-ET-7BI" secondAttribute="leading" id="Xuv-RT-nax"/>
+                            <constraint firstItem="avE-6Q-xXA" firstAttribute="top" secondItem="dPS-ET-7BI" secondAttribute="bottom" constant="20" id="YKY-H2-KaB"/>
+                            <constraint firstItem="NnE-SU-yjt" firstAttribute="top" secondItem="FOU-fd-XeU" secondAttribute="bottom" constant="8" id="cK2-3A-CKa"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="dPS-ET-7BI" secondAttribute="trailing" id="ofL-du-j5f"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="connButton" destination="NnE-SU-yjt" id="FyB-1a-KKP"/>
+                        <outlet property="textView" destination="dPS-ET-7BI" id="xN0-dy-qAU"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="wKN-UN-4Oj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1888" y="322"/>
+        </scene>
         <!--Settings View Controller-->
         <scene sceneID="MNG-GB-uaS">
             <objects>
@@ -60,6 +117,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="rvO-Z8-g3b">
+                        <barButtonItem key="leftBarButtonItem" title="To VPN Launch" id="jfU-8z-e3W">
+                            <connections>
+                                <segue destination="Ma9-Mn-g4h" kind="show" id="dWX-lv-8NZ"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Сохранить" id="qVx-kh-G2F">
                             <connections>
                                 <action selector="saveButtonTapped:" destination="TBv-V2-FNh" id="6M0-A5-qWp"/>
@@ -79,6 +141,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="soT-sY-zRL" sceneMemberID="viewController">
                     <toolbarItems/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="ia2-G6-CAa">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
