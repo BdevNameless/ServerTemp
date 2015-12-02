@@ -58,6 +58,8 @@
 		11344D061C0D335D0049F287 /* InputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InputCell.swift; sourceTree = "<group>"; };
 		11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZabbixConfiguration.swift; sourceTree = "<group>"; };
 		113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConnectionViewController.swift; sourceTree = "<group>"; };
+		113FD13C1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
+		113FD13D1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -349,6 +351,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				11344CD31C0D20E20049F287 /* Base */,
+				113FD13C1C0E82E300A4551E /* ru */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -357,6 +360,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				11344CD81C0D20E20049F287 /* Base */,
+				113FD13D1C0E82E300A4551E /* ru */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";

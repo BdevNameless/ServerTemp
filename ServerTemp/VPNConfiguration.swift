@@ -58,8 +58,7 @@ class VPNConfiguration {
         loadPassword()
     }
     
-    //MARK: - Private Methods
-    private func getPersistentRefForSharedKey() -> (NSData?, status: OSStatus?) {
+    internal func getPersistentRefForSharedKey() -> (NSData?, status: OSStatus?) {
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecReturnPersistentRef: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
@@ -74,7 +73,7 @@ class VPNConfiguration {
         return (nil, nil)
     }
     
-    private func getPersistentRefForPassword() -> (NSData?, status: OSStatus?){
+    internal func getPersistentRefForPassword() -> (NSData?, status: OSStatus?){
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword", kSecReturnPersistentRef: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
@@ -89,6 +88,7 @@ class VPNConfiguration {
         return (nil, nil)
     }
     
+    //MARK: - Private Methods
     private func loadSharedKey() -> OSStatus? {
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecReturnData: kCFBooleanTrue]
         var result: AnyObject?

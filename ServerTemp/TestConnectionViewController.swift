@@ -34,17 +34,54 @@ class TestConnectionViewController: UIViewController {
         textView.backgroundColor = UIColor.blackColor()
         textView.layer.borderWidth = 3.0
         textView.layer.borderColor = UIColor.greenColor().CGColor
-        textView.text = "⬆︎JUST TAP THIS FCKING BUTTON⬆︎"
+        textView.text = ""
     }
     
     private func confugureVPN() {
         let manager = NEVPNManager.sharedManager()
         manager.loadFromPreferencesWithCompletionHandler() { [unowned self] (error: NSError?) in
             if error != nil {
-                self.textView.text = self.textView.text + "\n\(error)"
+                self.textView.text = self.textView.text + "\n>\(error)"
             }
             else{
-                self.textView.text = self.textView.text + "\nVPN MANAGER УСПЕШНО ЗАГРУЖЕН"
+                self.textView.text = self.textView.text + "\n>VPN MANAGER УСПЕШНО ЗАГРУЖЕН.\n>НАСТРАИВАЮ ПОДКЛЮЧЕНИЕ..."
+                let configs = VPNConfiguration()
+                let p = NEVPNProtocolIPSec()
+                p.username = configs.username
+                self.textView.text = self.textView.text + "\n>ИСПОЛЬЗУЮ ИМЯ ПОЛЬЗОВАТЕЛЯ: \(p.username)."
+                let pwdRef = configs.getPersistentRefForPassword()
+                if pwdRef.status == nil {
+                    p.passwordReference = pwdRef.0
+                    self.textView.text = self.textView.text + "\n>ПОЛУЧЕН УКАЗАТЕЛЬ НА ПАРОЛЬ ИЗ СВЯЗКИ"
+                }
+                else{
+                    self.textView.text = self.textView.text + "\n>НЕ УДАЛОСЬ ПОЛУЧИТЬ УКАЗАТЕЛЬ НА ПАРОЛЬ ИЗ СВЯЗКИ. ERROR CODE: \(pwdRef.status)."
+                }
+                p.serverAddress = configs.serverAddress
+                self.textView.text = self.textView.text + "\n>ИСПОЛЬЗУЮ АДРЕС СЕРВЕРА: \(p.serverAddress)."
+                p.authenticationMethod = .SharedSecret
+                let shsRef = configs.getPersistentRefForSharedKey()
+                if shsRef.status == nil {
+                    p.sharedSecretReference = shsRef.0
+                    self.textView.text = self.textView.text + "\n>ПОЛУЧЕН УКАЗАТЕЛЬ НА ОБЩИЙ СЕКРЕТ ИЗ СВЯЗКИ"
+                }
+                else{
+                    self.textView.text = self.textView.text + "\n>НЕ УДАЛОСЬ ПОЛУЧИТЬ УКАЗАТЕЛЬ НА ОБЩИЙ СЕКРЕТ ИЗ СВЯЗКИ. ERROR CODE: \(shsRef.status)."
+                }
+                p.disconnectOnSleep = false
+                p.useExtendedAuthentication = true
+                manager.protocolConfiguration = p
+                manager.localizedDescription = "МОЙ УЮТНЫЙ VPN"
+                self.textView.text = self.textView.text + "\n>ПРОТОКОЛ СКОНФИГУРИРОВАН. СОХРАНЯЮ НАСТРОЙКИ..."
+                manager.saveToPreferencesWithCompletionHandler() { [unowned self] (error: NSError?) in
+                    if error != nil {
+                        self.textView.text = self.textView.text + "\n>\(error)"
+                    }
+                    else{
+                        self.textView.text = self.textView.text + "\nНАСТРОЙКИ УСПЕШНО СОХРАНЕНЫ.\n>⬆︎JUST TAP THIS FCKING BUTTON⬆︎"
+                    }
+                }
+                
             }
         }
     }
