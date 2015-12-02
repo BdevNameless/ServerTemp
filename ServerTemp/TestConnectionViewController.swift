@@ -8,6 +8,7 @@
 
 import UIKit
 import NetworkExtension
+import SWRevealViewController
 
 class TestConnectionViewController: UIViewController {
     
@@ -27,6 +28,7 @@ class TestConnectionViewController: UIViewController {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureReveal()
         configureView()
         confugureVPN()
     }
@@ -37,6 +39,12 @@ class TestConnectionViewController: UIViewController {
         if manager.connection.status == .Connected {
             manager.connection.stopVPNTunnel()
         }
+    }
+    
+    //MARK: - PrivateMethods
+    
+    private func configureReveal() {
+        view.addGestureRecognizer(revealViewController().panGestureRecognizer())
     }
     
     private func configureView() {

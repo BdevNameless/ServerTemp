@@ -31,6 +31,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureReveal()
         saveButton.enabled = false
     }
     
@@ -44,6 +45,10 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     //MARK: - Private Model Methods
+    
+    private func configureReveal() {
+        view.addGestureRecognizer(revealViewController().panGestureRecognizer())
+    }
     
     private func updateConfigurations() {
         updateVPNConfig()
