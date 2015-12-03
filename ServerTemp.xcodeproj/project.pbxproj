@@ -20,6 +20,7 @@
 		11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */; };
 		113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */; };
 		11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */; };
+		11C23E511C0FB4E4000D2C81 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E501C0FB4E4000D2C81 /* MenuCell.swift */; };
 		F250CC307916A3BBFF83E192 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30FF75A38604C3C4E3EFA18B /* Pods.framework */; };
 /* End PBXBuildFile section */
 
@@ -63,6 +64,7 @@
 		113FD13C1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
 		113FD13D1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuController.swift; sourceTree = "<group>"; };
+		11C23E501C0FB4E4000D2C81 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		1B7C98F0DE8C72E1D369175D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		30FF75A38604C3C4E3EFA18B /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFC43C8B3044A4E56F92E58B /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 			isa = PBXGroup;
 			children = (
 				11344D061C0D335D0049F287 /* InputCell.swift */,
+				11C23E501C0FB4E4000D2C81 /* MenuCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -390,6 +393,7 @@
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
 				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
 				11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */,
+				11C23E511C0FB4E4000D2C81 /* MenuCell.swift in Sources */,
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -26,13 +26,13 @@ class MainMenuController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MenuCell")!
+        let cell = tableView.dequeueReusableCellWithIdentifier("MenuCell") as! MenuCell
         configureCell(cell, forIndexPath: indexPath)
         return cell
     }
     
-    private func configureCell(cell: UITableViewCell, forIndexPath indexPath: NSIndexPath) {
-        cell.textLabel?.text = menuItems[indexPath.row]
+    private func configureCell(cell: MenuCell, forIndexPath indexPath: NSIndexPath) {
+        cell.menuLabel.text = menuItems[indexPath.row]
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

@@ -19,11 +19,44 @@ class VPNConfiguration {
     }
     
     //MARK: - Instance varuables
-    internal var serverAddress: String? = nil
-    internal var username: String? = nil
-    internal var password: String? = nil
-    internal var sharedKey: String? = nil
-    internal var groupName: String? = nil
+    private let manager = NEVPNManager.sharedManager()
+    internal var connectionStatus: NEVPNStatus {
+        get {
+            return manager.connection.status
+        }
+    }
+    internal var serverAddress: String? {
+        get {
+            return manager.protocolConfiguration?.serverAddress
+        }
+        set {
+            manager.protocolConfiguration?.serverAddress = newValue
+        }
+    }
+    internal var username: String? {
+        get {
+            return manager.protocolConfiguration?.username
+        }
+        set {
+            manager.protocolConfiguration?.username = newValue
+        }
+    }
+    internal var password: String? {
+        get {
+            return loadKeyForAccount("VPNPassword")
+        }
+        set {
+            updatePassword(newValue)
+        }
+    }
+    internal var sharedKey: String? {
+        get {
+            return loadKeyForAccount("VPNSharedKey")
+        }
+        set {
+            updateSharedKey(newValue)
+        }
+    }
     
     //MARK: - Public API
     
@@ -40,25 +73,39 @@ class VPNConfiguration {
         if (conf.sharedKey != sharedKey) {
             return false
         }
-        if (conf.groupName != groupName) {
-            return false
-        }
         return true
     }
     
     internal func saveConfiguration() {
         savePublicData()
-        updateSharedKey()
-        updatePassword()
     }
     
     internal func loadConfigugarion() {
         loadPublicData()
-        loadSharedKey()
-        loadPassword()
     }
     
-    internal func getPersistentRefForSharedKey() -> (NSData?, status: OSStatus?) {
+    internal func startVPN() throws {
+        if (manager.connection.status == .Disconnected) {
+            do {
+                print("STARTING VPN TUNNEL")
+                try manager.connection.startVPNTunnel()
+            }
+            catch let error {
+                throw error
+            }
+        }
+    }
+    
+    internal func stopVPN() {
+        if (manager.connection.status == .Connected) {
+            print("STOPPING VPN TUNNEL")
+            manager.connection.stopVPNTunnel()
+        }
+    }
+    
+    
+    //MARK: - Private Methods
+    private func getPersistentRefForSharedKey() -> (NSData?, status: OSStatus?) {
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecReturnPersistentRef: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
@@ -73,7 +120,7 @@ class VPNConfiguration {
         return (nil, nil)
     }
     
-    internal func getPersistentRefForPassword() -> (NSData?, status: OSStatus?){
+    private func getPersistentRefForPassword() -> (NSData?, status: OSStatus?){
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword", kSecReturnPersistentRef: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
@@ -88,106 +135,117 @@ class VPNConfiguration {
         return (nil, nil)
     }
     
-    //MARK: - Private Methods
-    private func loadSharedKey() -> OSStatus? {
-        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecReturnData: kCFBooleanTrue]
+    private func loadKeyForAccount(account: String) -> String? {
+        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: account, kSecReturnData: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
             SecItemCopyMatching(query as CFDictionaryRef, UnsafeMutablePointer(cfPointer))
         }
         if status != errSecSuccess {
-            return (status)
+            print("ERROR WHILE LOADING \(account) KEY : \(status)")
+            return nil
         }
         if let resultData = result as? NSData {
-            sharedKey = String(data: resultData, encoding: NSUTF8StringEncoding)
-            return (nil)
+            return String(data: resultData, encoding: NSUTF8StringEncoding)
         }
-        return (nil)
+        return nil
     }
     
-    private func loadPassword() -> OSStatus? {
-        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword", kSecReturnData: kCFBooleanTrue]
-        var result: AnyObject?
-        let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
-            SecItemCopyMatching(query as CFDictionaryRef, UnsafeMutablePointer(cfPointer))
-        }
-        if status != errSecSuccess {
-            return (status)
-        }
-        if let resultData = result as? NSData {
-            password = String(data: resultData, encoding: NSUTF8StringEncoding)
-            return (nil)
-        }
-        return (nil)
-    }
-    
-    private func addSharedKey() -> OSStatus {
-        guard sharedKey != nil else {
-            return errSecParam
-        }
+    private func addSharedKey(sharedKey: String?) {
         let data = sharedKey!.dataUsingEncoding(NSUTF8StringEncoding)
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecValueData: data!]
         let status = SecItemAdd(query as CFDictionaryRef, nil)
-        return status
+        if (status != errSecSuccess) {
+            print("ERROR WHILE ADDING NEW SHARED KEY : \(status)")
+        }
     }
     
-    private func addPassword() -> OSStatus {
-        guard password != nil else {
-            return errSecParam
-        }
+    private func addPassword(password: String?) {
         let data = password!.dataUsingEncoding(NSUTF8StringEncoding)
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword", kSecValueData: data!]
         let status = SecItemAdd(query as CFDictionaryRef, nil)
-        return status
+        if (status != errSecSuccess) {
+            print("ERROR WHILE ADDING NEW VPN PASSWORD : \(status)")
+        }
     }
     
-    private func updateSharedKey() -> OSStatus {
-        guard sharedKey != nil else {
-            return errSecParam
+    private func updateSharedKey(value: String?) {
+        if value != sharedKey {
+            guard value != nil else {
+                print("ERROR WHILE UPDATING SHARED KEY. VALUE MUST NOT BE NIL.")
+                return
+            }
+            let data = value!.dataUsingEncoding(NSUTF8StringEncoding)
+            let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey"]
+            let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
+            let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
+            if (status == errSecItemNotFound) {
+                print("NO SHARED KEY FOUND. CREATING NEW ONE.")
+                addSharedKey(value)
+            }
+            else if (status != errSecSuccess) {
+                print("ERROR WHILE UPDATING SHARED KEY : \(status)")
+            }
         }
-        let data = sharedKey!.dataUsingEncoding(NSUTF8StringEncoding)
-        let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey"]
-        let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
-        let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
-        if status == errSecItemNotFound {
-            return addSharedKey()
-        }
-        return status
     }
     
-    private func updatePassword() -> OSStatus {
-        guard password != nil else {
-            return errSecParam
+    private func updatePassword(value: String?) {
+        if value != password {
+            guard value != nil else {
+                print("ERROR WHILE UPDATING VPN PASSWORD. VALUE MUST NOT BE NIL.")
+                return
+            }
+            let data = value!.dataUsingEncoding(NSUTF8StringEncoding)
+            let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword"]
+            let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
+            let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
+            if status == errSecItemNotFound {
+                print("NO VPN PASSWORD FOUND. CREATING NEW ONE.")
+                addPassword(value)
+            }
+            else if (status != errSecSuccess){
+                print("ERROR WHILE UPDATING VPN PASSWORD : \(status)")
+            }
         }
-        let data = password!.dataUsingEncoding(NSUTF8StringEncoding)
-        let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword"]
-        let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
-        let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
-        if status == errSecItemNotFound {
-            return addPassword()
-        }
-        return status
     }
     
     private func savePublicData() {
-        let userDefaults = NSUserDefaults.standardUserDefaults()
-        if serverAddress != nil {
-            userDefaults.setValue(serverAddress!, forKey: "VPNServerAddress")
+        let p = manager.protocolConfiguration as! NEVPNProtocolIPSec
+        let shsRef = getPersistentRefForSharedKey()
+        if shsRef.status == nil {
+            p.sharedSecretReference = shsRef.0
         }
-        if username != nil {
-            userDefaults.setValue(username!, forKey: "VPNUsername")
+        let pwdRef = getPersistentRefForPassword()
+        if pwdRef.status == nil {
+            p.passwordReference = pwdRef.0
         }
-        if groupName != nil {
-            userDefaults.setValue(groupName!, forKey: "VPNGroupName")
+        manager.saveToPreferencesWithCompletionHandler() { (error: NSError?) in
+            if error == nil {
+                print("VPN PREFERENCES SECSESSFULY SAVED")
+            }
+            else {
+                print("ERROR WHILE SAVING VPN PREFERENCES : \(error)")
+            }
         }
-        userDefaults.synchronize()
     }
     
     private func loadPublicData() {
-        let defaults = NSUserDefaults.standardUserDefaults()
-        serverAddress = defaults.valueForKey("VPNServerAddress") as? String
-        username = defaults.valueForKey("VPNUsername") as? String
-        groupName = defaults.valueForKey("VPNGroupName") as? String
+        manager.loadFromPreferencesWithCompletionHandler() { [unowned self] (error: NSError?) in
+            if (error == nil) {
+                print("VPN PREFERENCES HAVE BEEN LOADED \(NSDate())")
+                if (self.manager.protocolConfiguration == nil) {
+                    print("NEW VPN PROTOCOL CONFIGURATION CREATED")
+                    let p = NEVPNProtocolIPSec()
+                    p.authenticationMethod = .SharedSecret
+                    p.disconnectOnSleep = false
+                    p.useExtendedAuthentication = true
+                    self.manager.protocolConfiguration = p
+                }
+                NSNotificationCenter.defaultCenter().postNotificationName("VPNPreferencesLoaded", object: nil)
+            }
+            else {
+                print("ERROR WHILE LOADING VPN PREFERENCES: \(error)")
+            }
+        }
     }
-    
 }

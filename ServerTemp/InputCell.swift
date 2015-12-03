@@ -29,8 +29,8 @@ class InputCell: UITableViewCell, UITextFieldDelegate {
         delegate = nil
     }
     
-    internal func textChanged() {
-        if let del = delegate {
+    internal func printAction() {
+        if let del = delegate{
             del.checkChanges(self)
         }
     }

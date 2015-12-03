@@ -11,20 +11,16 @@ import UIKit
 class SettingsViewController: UITableViewController, InputCellDelegate {
     
     //MARK: - Instance Variables
-    private let VPNSettings = ["Адрес сервера", "Имя группы", "Общий ключ", "Учетная запись", "Пароль"]
+    private let VPNSettings = ["Адрес сервера", "Общий ключ", "Учетная запись", "Пароль"]
     private let ZabbixSettings = ["Пользователь", "Пароль"]
-    
-    //MARK: Configurations
-    lazy private var oldVPNConfig : VPNConfiguration = {
-        return VPNConfiguration()
-    }()
-    lazy private var newVPNConfig: VPNConfiguration = {
-        return VPNConfiguration()
-    }()
-    lazy private var oldZabbixConfig : ZabbixConfiguration = {
+//    lazy private var vpnConfig = {
+//        return VPNConfiguration()
+//    }()
+    private let vpnConfig = VPNConfiguration()
+    lazy private var oldZabbixConfig = {
         return ZabbixConfiguration()
     }()
-    lazy private var newZabbixConfig: ZabbixConfiguration = {
+    lazy private var newZabbixConfig = {
         return ZabbixConfiguration()
     }()
     
@@ -32,31 +28,38 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         configureReveal()
+        configureNotificationHandling()
         saveButton.enabled = false
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        vpnConfig.saveConfiguration()
     }
     
     //MARK: - InterfaceBuilder
     @IBOutlet weak var saveButton: UIBarButtonItem!
     @IBAction func saveButtonTapped(sender: UIBarButtonItem) {
-        newVPNConfig.saveConfiguration()
         newZabbixConfig.saveConfiguration()
         saveButton.enabled = false
         updateConfigurations()
     }
     
-    //MARK: - Private Model Methods
+    internal func updateData(aNotif: NSNotification?) {
+        tableView.reloadData()
+    }
+    
+    //MARK: - Private Methods
+    private func configureNotificationHandling() {
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateData:", name: "VPNPreferencesLoaded", object: nil)
+    }
     
     private func configureReveal() {
         view.addGestureRecognizer(revealViewController().panGestureRecognizer())
     }
     
     private func updateConfigurations() {
-        updateVPNConfig()
         UpdateZabbixConfig()
-    }
-    
-    private func updateVPNConfig() {
-        oldVPNConfig.loadConfigugarion()
     }
     
     private func UpdateZabbixConfig() {
@@ -79,19 +82,16 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     private func setValueForVPNField(fieldName: String, cell: InputCell) {
         switch fieldName {
         case "Адрес сервера":
-            cell.textField.text = newVPNConfig.serverAddress
-            break
-        case "Имя группы":
-            cell.textField.text = newVPNConfig.groupName
+            cell.textField.text = vpnConfig.serverAddress
             break
         case "Общий ключ":
-            cell.textField.text = newVPNConfig.sharedKey
+            cell.textField.text = vpnConfig.sharedKey
             break
         case "Учетная запись":
-            cell.textField.text = newVPNConfig.username
+            cell.textField.text = vpnConfig.username
             break
         case "Пароль":
-            cell.textField.text = newVPNConfig.password
+            cell.textField.text = vpnConfig.password
             break
         default:
             break
@@ -103,23 +103,20 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         let indexPath = tableView.indexPathForCell(sender)!
         if (indexPath.section == 0){
             switch sender.label.text! {
-            case "Адрес сервера":
-                newVPNConfig.serverAddress = sender.textField.text
-                break
-            case "Имя группы":
-                newVPNConfig.groupName = sender.textField.text
-                break
-            case "Общий ключ":
-                newVPNConfig.sharedKey = sender.textField.text
-                break
-            case "Учетная запись":
-                newVPNConfig.username = sender.textField.text
-                break
-            case "Пароль":
-                newVPNConfig.password = sender.textField.text
-                break
-            default:
-                break
+                case "Адрес сервера":
+                    vpnConfig.serverAddress = sender.textField.text
+                    break
+                case "Общий ключ":
+                    vpnConfig.sharedKey = sender.textField.text
+                    break
+                case "Учетная запись":
+                    vpnConfig.username = sender.textField.text
+                    break
+                case "Пароль":
+                    vpnConfig.password = sender.textField.text
+                    break
+                default:
+                    break
             }
         }
         else {
@@ -134,7 +131,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
                 break
             }
         }
-        if (newVPNConfig.isEqual(oldVPNConfig)&&(newZabbixConfig.isEqual(oldZabbixConfig))){
+        if newZabbixConfig.isEqual(oldZabbixConfig) {
             saveButton.enabled = false
         }
         else {
@@ -155,9 +152,9 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCellWithIdentifier("InputCell")
-        configureCell(aCell as! InputCell, forIndexPath: indexPath)
-        return aCell!
+        let aCell = tableView.dequeueReusableCellWithIdentifier("InputCell") as! InputCell
+        configureCell(aCell, forIndexPath: indexPath)
+        return aCell
     }
     
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
@@ -184,7 +181,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         }
         cell.selectionStyle = .None
         cell.textField.delegate = cell
-        cell.textField.addTarget(cell, action: "textChanged", forControlEvents: .EditingChanged)
+        cell.textField.addTarget(cell, action: "printAction", forControlEvents: .EditingDidEnd)
         cell.delegate = self
     }
     
