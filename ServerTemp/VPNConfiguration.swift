@@ -14,23 +14,47 @@ class VPNConfiguration {
     
     
     //MARK: -  Initializers
-    init() {
-        loadConfigugarion()
+    init(_ loadConfig: Bool = false) {
+        if loadConfig {
+            loadConfigugarion()
+        }
     }
     
     //MARK: - Instance varuables
     private let manager = NEVPNManager.sharedManager()
+    private var needToSave = false
+    internal var managerEnabled: Bool {
+        get {
+            return manager.enabled
+        }
+        set {
+            manager.enabled = newValue
+        }
+    }
     internal var connectionStatus: NEVPNStatus {
         get {
             return manager.connection.status
         }
     }
+    
     internal var serverAddress: String? {
         get {
             return manager.protocolConfiguration?.serverAddress
         }
         set {
             manager.protocolConfiguration?.serverAddress = newValue
+            needToSave = true
+        }
+    }
+    internal var groupName: String? {
+        get {
+            let ipsecP = manager.protocolConfiguration as? NEVPNProtocolIPSec
+            return ipsecP?.localIdentifier
+        }
+        set {
+            let ipsecP = manager.protocolConfiguration as? NEVPNProtocolIPSec
+            ipsecP?.localIdentifier = newValue
+            needToSave = true
         }
     }
     internal var username: String? {
@@ -39,6 +63,7 @@ class VPNConfiguration {
         }
         set {
             manager.protocolConfiguration?.username = newValue
+            needToSave = true
         }
     }
     internal var password: String? {
@@ -47,6 +72,7 @@ class VPNConfiguration {
         }
         set {
             updatePassword(newValue)
+            needToSave = true
         }
     }
     internal var sharedKey: String? {
@@ -55,24 +81,55 @@ class VPNConfiguration {
         }
         set {
             updateSharedKey(newValue)
+            needToSave = true
         }
     }
     
     //MARK: - Public API
     
     internal func saveConfiguration() {
-        savePublicData()
+        if needToSave {
+            savePublicData()
+        }
     }
     
     internal func loadConfigugarion() {
         loadPublicData()
     }
     
+    internal func removeConfiguration() {
+        manager.removeFromPreferencesWithCompletionHandler() { (error: NSError?) in
+            if error == nil {
+                print("VPN PREFERENCES REMOVED")
+            }
+            else {
+                print("ERROR WHILE REMOVING VPN PREFERENCES. ERROR : \(error)")
+            }
+        }
+    }
+    
+    internal func testConnection() {
+        if needToSave {
+            saveConfiguration()
+        }
+        do {
+            try startVPN()
+        }
+        catch let error{
+            print(error)
+        }
+    }
+    
     internal func startVPN() throws {
+//        NEVPNConnectionStartOptionUsername
+//        NEVPNConnectionStartOptionPassword
         if (manager.connection.status == .Disconnected) {
             do {
                 print("STARTING VPN TUNNEL")
                 try manager.connection.startVPNTunnel()
+//                let options: [String: NSObject]? = [NEVPNConnectionStartOptionUsername: username!, NEVPNConnectionStartOptionPassword: password!]
+//                print(options)
+//                try manager.connection.startVPNTunnelWithOptions(nil)
             }
             catch let error {
                 throw error
@@ -225,7 +282,7 @@ class VPNConfiguration {
                     p.useExtendedAuthentication = true
                     self.manager.protocolConfiguration = p
                 }
-                NSNotificationCenter.defaultCenter().postNotificationName("VPNPreferencesLoaded", object: nil)
+//                NSNotificationCenter.defaultCenter().postNotificationName("VPNPreferencesLoaded", object: nil)
             }
             else {
                 print("ERROR WHILE LOADING VPN PREFERENCES: \(error)")

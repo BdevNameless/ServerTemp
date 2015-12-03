@@ -11,12 +11,9 @@ import UIKit
 class SettingsViewController: UITableViewController, InputCellDelegate {
     
     //MARK: - Instance Variables
-    private let VPNSettings = ["Адрес сервера", "Общий ключ", "Учетная запись", "Пароль"]
+//    private let VPNSettings = ["Адрес сервера", "Имя группы", "Общий ключ", "Учетная запись", "Пароль"]
     private let ZabbixSettings = ["Пользователь", "Пароль"]
-//    lazy private var vpnConfig = {
-//        return VPNConfiguration()
-//    }()
-    private let vpnConfig = VPNConfiguration()
+    private let vpnConfig = VPNConfiguration(true)
     private let zabbixConfig = ZabbixConfiguration()
     
     //MARK: - Lifecycle
@@ -28,7 +25,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
-        vpnConfig.saveConfiguration()
+//        vpnConfig.saveConfiguration()
     }
     
     internal func updateData(aNotif: NSNotification?) {
@@ -37,7 +34,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     //MARK: - Private Methods
     private func configureNotificationHandling() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateData:", name: "VPNPreferencesLoaded", object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "updateData:", name: "VPNPreferencesLoaded", object: nil)
     }
     
     private func configureReveal() {
@@ -57,48 +54,32 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         }
     }
     
-    private func setValueForVPNField(fieldName: String, cell: InputCell) {
-        switch fieldName {
-        case "Адрес сервера":
-            cell.textField.text = vpnConfig.serverAddress
-            break
-        case "Общий ключ":
-            cell.textField.text = vpnConfig.sharedKey
-            break
-        case "Учетная запись":
-            cell.textField.text = vpnConfig.username
-            break
-        case "Пароль":
-            cell.textField.text = vpnConfig.password
-            break
-        default:
-            break
-        }
-    }
+//    private func setValueForVPNField(fieldName: String, cell: InputCell) {
+//        switch fieldName {
+//        case "Адрес сервера":
+//            cell.textField.text = vpnConfig.serverAddress
+//            break
+//        case "Имя группы":
+//            cell.textField.text = vpnConfig.groupName
+//            break
+//        case "Общий ключ":
+//            cell.textField.text = vpnConfig.sharedKey
+//            break
+//        case "Учетная запись":
+//            cell.textField.text = vpnConfig.username
+//            break
+//        case "Пароль":
+//            cell.textField.text = vpnConfig.password
+//            break
+//        default:
+//            break
+//        }
+//    }
     
     //MARK: - InputCellDelegate
     func checkChanges(sender: InputCell) {
-        let indexPath = tableView.indexPathForCell(sender)!
-        if (indexPath.section == 0){
-            switch sender.label.text! {
-                case "Адрес сервера":
-                    vpnConfig.serverAddress = sender.textField.text
-                    break
-                case "Общий ключ":
-                    vpnConfig.sharedKey = sender.textField.text
-                    break
-                case "Учетная запись":
-                    vpnConfig.username = sender.textField.text
-                    break
-                case "Пароль":
-                    vpnConfig.password = sender.textField.text
-                    break
-                default:
-                    break
-            }
-        }
-        else {
-            switch sender.label.text! {
+//        let indexPath = tableView.indexPathForCell(sender)!
+        switch sender.label.text! {
             case "Пользователь":
                 zabbixConfig.username = sender.textField.text
                 break
@@ -107,8 +88,40 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
                 break
             default:
                 break
-            }
         }
+//        if (indexPath.section == 0){
+//            switch sender.label.text! {
+//                case "Адрес сервера":
+//                    vpnConfig.serverAddress = sender.textField.text
+//                    break
+//                case "Имя группы":
+//                    vpnConfig.groupName = sender.textField.text
+//                    break
+//                case "Общий ключ":
+//                    vpnConfig.sharedKey = sender.textField.text
+//                    break
+//                case "Учетная запись":
+//                    vpnConfig.username = sender.textField.text
+//                    break
+//                case "Пароль":
+//                    vpnConfig.password = sender.textField.text
+//                    break
+//                default:
+//                    break
+//            }
+//        }
+//        else {
+//            switch sender.label.text! {
+//            case "Пользователь":
+//                zabbixConfig.username = sender.textField.text
+//                break
+//            case "Пароль":
+//                zabbixConfig.password = sender.textField.text
+//                break
+//            default:
+//                break
+//            }
+//        }
     }
     
     //MARK: - UITableViewDelegate
@@ -118,35 +131,58 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if (section == 0) {
-            return VPNSettings.count
+//            return VPNSettings.count
+            return ZabbixSettings.count
         }
-        return ZabbixSettings.count
+//        return ZabbixSettings.count
+        return 1
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let aCell = tableView.dequeueReusableCellWithIdentifier("InputCell") as! InputCell
-        configureCell(aCell, forIndexPath: indexPath)
+//        let aCell = tableView.dequeueReusableCellWithIdentifier("InputCell") as! InputCell
+//        configureCell(aCell, forIndexPath: indexPath)
+//        return aCell
+        if indexPath.section == 0 {
+            let aCell = tableView.dequeueReusableCellWithIdentifier("InputCell") as! InputCell
+            configureCell(aCell, forIndexPath: indexPath)
+            return aCell
+        }
+        let aCell = tableView.dequeueReusableCellWithIdentifier("toVPNCell") as! DisclosureCell
+        aCell.label.text = "Настроить VPN"
         return aCell
     }
     
     override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         if section == 0 {
-            return "Конфигурация VPN"
+//            return "Конфигурация VPN"
+            return "Конфигурация подключения к Zabbix-серверу"
         }
-        return "Конфигурация подключения к Zabbix-серверу"
+//        return "Конфигурация подключения к Zabbix-серверу"
+        return "Конфигурация VPN"
     }
     
     private func configureCell(cell: InputCell, forIndexPath indexPath: NSIndexPath) {
-        var setting: String
-        let secureFields: Set<String> = ["Общий ключ", "Пароль"]
-        if indexPath.section == 0 {
-            setting = VPNSettings[indexPath.row]
-            setValueForVPNField(setting, cell: cell)
-        }
-        else {
-            setting = ZabbixSettings[indexPath.row]
-            setValueForZabbixField(setting, cell: cell)
-        }
+//        var setting: String
+//        let secureFields: Set<String> = ["Общий ключ", "Пароль"]
+//        if indexPath.section == 0 {
+//            setting = VPNSettings[indexPath.row]
+//            setValueForVPNField(setting, cell: cell)
+//        }
+//        else {
+//            setting = ZabbixSettings[indexPath.row]
+//            setValueForZabbixField(setting, cell: cell)
+//        }
+//        cell.label.text = setting
+//        if secureFields.contains(setting) {
+//            cell.textField.secureTextEntry = true
+//        }
+//        cell.selectionStyle = .None
+//        cell.textField.delegate = cell
+//        cell.textField.addTarget(cell, action: "printAction", forControlEvents: .EditingDidEnd)
+//        cell.delegate = self
+        let secureFields: Set<String> = ["Пароль"]
+        let setting = ZabbixSettings[indexPath.row]
+        setValueForZabbixField(setting, cell: cell)
         cell.label.text = setting
         if secureFields.contains(setting) {
             cell.textField.secureTextEntry = true
@@ -158,8 +194,15 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        let aCell = tableView.cellForRowAtIndexPath(indexPath)
-        (aCell as! InputCell).textField.becomeFirstResponder()
+//        let aCell = tableView.cellForRowAtIndexPath(indexPath)
+//        (aCell as! InputCell).textField.becomeFirstResponder()
+        if indexPath.section == 0 {
+            let aCell = tableView.cellForRowAtIndexPath(indexPath)
+            (aCell as! InputCell).textField.becomeFirstResponder()
+        }
+        else {
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+        }
     }
     
     
