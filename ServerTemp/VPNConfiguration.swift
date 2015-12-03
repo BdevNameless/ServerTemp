@@ -134,7 +134,7 @@ class VPNConfiguration {
         }
     }
     
-    internal func testConnection() throws {
+    internal func testConnection() {
         saveConfiguration() { [unowned self] (error: NSError?) in
             try! self.startVPN()
         }

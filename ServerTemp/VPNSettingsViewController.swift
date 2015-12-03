@@ -22,6 +22,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     internal func statusChanged(aNotif: NSNotification){
+        print(vpnConfig.connectionStatus.rawValue)
         if vpnConfig.connectionStatus.rawValue == 3 {
             // USPEX
             let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение по VPN установлено.", preferredStyle: .Alert)
@@ -33,12 +34,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     internal func testButtonTapped() {
-        do {
-            try vpnConfig.testConnection()
-        }
-        catch {
-            print("\(error)")
-        }
+        vpnConfig.testConnection()
     }
     
     internal func delButtonTapped() {
