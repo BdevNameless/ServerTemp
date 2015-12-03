@@ -87,9 +87,35 @@ class VPNConfiguration {
     
     //MARK: - Public API
     
-    internal func saveConfiguration() {
+    internal func saveConfiguration(handler: ((error: NSError?) -> Void)? = nil) {
         if needToSave {
-            savePublicData()
+            let p = manager.protocolConfiguration as! NEVPNProtocolIPSec
+            let shsRef = getPersistentRefForSharedKey()
+            if shsRef.status == nil {
+                p.sharedSecretReference = shsRef.0
+            }
+            let pwdRef = getPersistentRefForPassword()
+            if pwdRef.status == nil {
+                p.passwordReference = pwdRef.0
+            }
+            manager.saveToPreferencesWithCompletionHandler() { [unowned self] (saveError: NSError?) in
+                if saveError == nil {
+                    print("VPN PREFERENCES SECSESSFULY SAVED")
+                    self.needToSave = false
+                    if handler != nil {
+                        handler!(error: nil)
+                    }
+                }
+                else {
+                    print("ERROR WHILE SAVING VPN PREFERENCES : \(saveError)")
+                    if handler != nil {
+                        handler!(error: saveError)
+                    }
+                }
+            }
+        }
+        if handler != nil {
+            handler!(error: nil)
         }
     }
     
@@ -108,28 +134,17 @@ class VPNConfiguration {
         }
     }
     
-    internal func testConnection() {
-        if needToSave {
-            saveConfiguration()
-        }
-        do {
-            try startVPN()
-        }
-        catch let error{
-            print(error)
+    internal func testConnection() throws {
+        saveConfiguration() { [unowned self] (error: NSError?) in
+            try! self.startVPN()
         }
     }
     
     internal func startVPN() throws {
-//        NEVPNConnectionStartOptionUsername
-//        NEVPNConnectionStartOptionPassword
         if (manager.connection.status == .Disconnected) {
             do {
-                print("STARTING VPN TUNNEL")
                 try manager.connection.startVPNTunnel()
-//                let options: [String: NSObject]? = [NEVPNConnectionStartOptionUsername: username!, NEVPNConnectionStartOptionPassword: password!]
-//                print(options)
-//                try manager.connection.startVPNTunnelWithOptions(nil)
+                print("STARTING VPN TUNNEL")
             }
             catch let error {
                 throw error
@@ -282,7 +297,7 @@ class VPNConfiguration {
                     p.useExtendedAuthentication = true
                     self.manager.protocolConfiguration = p
                 }
-//                NSNotificationCenter.defaultCenter().postNotificationName("VPNPreferencesLoaded", object: nil)
+                print(self.manager.enabled)
             }
             else {
                 print("ERROR WHILE LOADING VPN PREFERENCES: \(error)")

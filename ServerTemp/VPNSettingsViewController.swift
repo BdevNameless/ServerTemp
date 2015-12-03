@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import NetworkExtension
+import MBProgressHUD
 
 class VPNSettingsViewController: UITableViewController, InputCellDelegate {
 
@@ -14,15 +16,45 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     private let VPNSettings = ["Адрес сервера", "Имя группы", "Общий ключ", "Учетная запись", "Пароль"]
     private let vpnConfig = VPNConfiguration()
     
-    
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
+    internal func statusChanged(aNotif: NSNotification){
+        if vpnConfig.connectionStatus.rawValue == 3 {
+            // USPEX
+            let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение по VPN установлено.", preferredStyle: .Alert)
+            alertVC.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            self.presentViewController(alertVC, animated: true) { [unowned self] in
+                self.vpnConfig.stopVPN()
+            }
+        }
+    }
+    
+    internal func testButtonTapped() {
+        do {
+            try vpnConfig.testConnection()
+        }
+        catch {
+            print("\(error)")
+        }
+    }
+    
+    internal func delButtonTapped() {
+        print("DEL THIS")
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "statusChanged:", name: NEVPNStatusDidChangeNotification, object: nil)
+    }
+    
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: NEVPNStatusDidChangeNotification, object: nil)
         vpnConfig.saveConfiguration()
+        vpnConfig.stopVPN()
     }
     
     //MARK: - Private Methods
@@ -97,12 +129,15 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     private func configureButtonCell(cell: ButtonCell, forIndexPath indexPath: NSIndexPath) {
+        cell.selectionStyle = .None
         if indexPath.section == 1 {
             cell.button.setTitle("Проверить соединение", forState: .Normal)
+            cell.button.addTarget(self, action: "testButtonTapped", forControlEvents: .TouchUpInside)
         }
         else {
             cell.button.setTitle("Удалить конфигурацию", forState: .Normal)
             cell.button.setTitleColor(UIColor.redColor(), forState: .Normal)
+            cell.button.addTarget(self, action: "delButtonTapped", forControlEvents: .TouchUpInside)
         }
     }
     
@@ -124,9 +159,6 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
         if indexPath.section == 0 {
             let aCell = tableView.cellForRowAtIndexPath(indexPath)
             (aCell as! InputCell).textField.becomeFirstResponder()
-        }
-        else {
-            tableView.deselectRowAtIndexPath(indexPath, animated: true)
         }
     }
 }
