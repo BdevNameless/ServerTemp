@@ -60,22 +60,6 @@ class VPNConfiguration {
     
     //MARK: - Public API
     
-    internal func isEqual(conf: VPNConfiguration) -> Bool {
-        if (conf.serverAddress != serverAddress) {
-            return false
-        }
-        if (conf.password != password) {
-            return false
-        }
-        if (conf.username != username) {
-            return false
-        }
-        if (conf.sharedKey != sharedKey) {
-            return false
-        }
-        return true
-    }
-    
     internal func saveConfiguration() {
         savePublicData()
     }

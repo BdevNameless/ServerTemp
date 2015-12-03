@@ -17,32 +17,18 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
 //        return VPNConfiguration()
 //    }()
     private let vpnConfig = VPNConfiguration()
-    lazy private var oldZabbixConfig = {
-        return ZabbixConfiguration()
-    }()
-    lazy private var newZabbixConfig = {
-        return ZabbixConfiguration()
-    }()
+    private let zabbixConfig = ZabbixConfiguration()
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureReveal()
         configureNotificationHandling()
-        saveButton.enabled = false
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         vpnConfig.saveConfiguration()
-    }
-    
-    //MARK: - InterfaceBuilder
-    @IBOutlet weak var saveButton: UIBarButtonItem!
-    @IBAction func saveButtonTapped(sender: UIBarButtonItem) {
-        newZabbixConfig.saveConfiguration()
-        saveButton.enabled = false
-        updateConfigurations()
     }
     
     internal func updateData(aNotif: NSNotification?) {
@@ -58,21 +44,13 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         view.addGestureRecognizer(revealViewController().panGestureRecognizer())
     }
     
-    private func updateConfigurations() {
-        UpdateZabbixConfig()
-    }
-    
-    private func UpdateZabbixConfig() {
-        oldZabbixConfig.loadConfigugarion()
-    }
-    
     private func setValueForZabbixField(fieldName: String, cell: InputCell) {
         switch fieldName {
         case "Пользователь":
-            cell.textField.text = newZabbixConfig.username
+            cell.textField.text = zabbixConfig.username
             break
         case "Пароль":
-            cell.textField.text = newZabbixConfig.password
+            cell.textField.text = zabbixConfig.password
             break
         default:
             break
@@ -122,20 +100,14 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         else {
             switch sender.label.text! {
             case "Пользователь":
-                newZabbixConfig.username = sender.textField.text
+                zabbixConfig.username = sender.textField.text
                 break
             case "Пароль":
-                newZabbixConfig.password = sender.textField.text
+                zabbixConfig.password = sender.textField.text
                 break
             default:
                 break
             }
-        }
-        if newZabbixConfig.isEqual(oldZabbixConfig) {
-            saveButton.enabled = false
-        }
-        else {
-            saveButton.enabled = true
         }
     }
     

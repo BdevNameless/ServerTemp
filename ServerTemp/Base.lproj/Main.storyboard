@@ -116,16 +116,7 @@
                             <outlet property="delegate" destination="TBv-V2-FNh" id="pJX-o4-0cr"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="rvO-Z8-g3b">
-                        <barButtonItem key="rightBarButtonItem" title="Сохранить" id="qVx-kh-G2F">
-                            <connections>
-                                <action selector="saveButtonTapped:" destination="TBv-V2-FNh" id="6M0-A5-qWp"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                    <connections>
-                        <outlet property="saveButton" destination="qVx-kh-G2F" id="cDQ-34-qXC"/>
-                    </connections>
+                    <navigationItem key="navigationItem" id="rvO-Z8-g3b"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9tP-wd-jBA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
