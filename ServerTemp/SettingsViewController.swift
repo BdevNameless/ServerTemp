@@ -86,6 +86,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         }
         let aCell = tableView.dequeueReusableCellWithIdentifier("SwitchCell") as! SwitchCell
         aCell.label.text = "Использовать VPN"
+        aCell.ui_switch.on = vpnConfig.managerEnabled
         return aCell
     }
     

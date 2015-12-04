@@ -16,10 +16,47 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     private let VPNSettings = ["Адрес сервера", "Имя группы", "Общий ключ", "Учетная запись", "Пароль"]
     private let vpnConfig = VPNConfiguration()
     private var testCell: ButtonCell? = nil
+    private var delCell: ButtonCell? = nil
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "statusChanged:", name: NEVPNStatusDidChangeNotification, object: nil)
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        NSNotificationCenter.defaultCenter().removeObserver(self, name: NEVPNStatusDidChangeNotification, object: nil)
+        vpnConfig.saveConfiguration()
+        vpnConfig.stopVPN()
+    }
+    
+    //MARK: - Internal Handlers
+    
+    func checkChanges(sender: InputCell) {
+        switch sender.label.text! {
+            case "Адрес сервера":
+                vpnConfig.serverAddress = sender.textField.text
+                break
+            case "Имя группы":
+                vpnConfig.groupName = sender.textField.text
+                break
+            case "Общий ключ":
+                vpnConfig.sharedKey = sender.textField.text
+                break
+            case "Учетная запись":
+                vpnConfig.username = sender.textField.text
+                break
+            case "Пароль":
+                vpnConfig.password = sender.textField.text
+                break
+            default:
+                break
+        }
     }
     
     internal func statusChanged(aNotif: NSNotification){
@@ -47,58 +84,52 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
         }
     }
     
-    internal func testButtonTapped() {
+    //MARK: - Private Methods
+    private func testButtonTapped() {
         view.userInteractionEnabled = false
         testCell?.spanner.startAnimating()
         testCell?.spanner.hidden = false
         vpnConfig.testConnection()
     }
     
-    internal func delButtonTapped() {
+    private func delButtonTapped() {
         let alertVC = UIAlertController(title: "Удаление", message: "Вы уверены что хотите удалить настройки?", preferredStyle: .Alert)
-        alertVC.addAction(UIAlertAction(title: "Да", style: .Destructive) { (action: UIAlertAction) in
-            print("DEL THIS")
+        alertVC.addAction(UIAlertAction(title: "Да", style: .Destructive) { [unowned self] (action: UIAlertAction) in
+            self.view.userInteractionEnabled = false
+            self.delCell?.spanner.hidden = false
+            self.delCell?.spanner.startAnimating()
+            self.vpnConfig.removeConfiguration() { [unowned self] (error: NSError?) in
+                self.delCell?.spanner.stopAnimating()
+                self.view.userInteractionEnabled = true
+                if error == nil {
+                    self.vpnConfig.loadConfigugarion()
+                    self.performAfterDelay(0.8) { [unowned self] in
+                        self.tableView.reloadData()
+                    }
+                }
+                else {
+                    self.showAlertForError(error!)
+                }
+            }
         })
         alertVC.addAction(UIAlertAction(title: "Нет", style: .Default, handler: nil))
         presentViewController(alertVC, animated: true, completion: nil)
     }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "statusChanged:", name: NEVPNStatusDidChangeNotification, object: nil)
+    private func showAlertForError(error: NSError) {
+        let message = error.userInfo["NSLocalizedDescription"] as? String
+        let alert = UIAlertController(title: error.domain, message: message, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(alert, animated: true, completion: nil)
     }
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
-        NSNotificationCenter.defaultCenter().removeObserver(self, name: NEVPNStatusDidChangeNotification, object: nil)
-        vpnConfig.saveConfiguration()
-        vpnConfig.stopVPN()
+    private func performAfterDelay(delay: Double, block: () -> ()) {
+        dispatch_after(
+            dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))),
+            dispatch_get_main_queue(),
+            block
+        )
     }
-    
-    //MARK: - Private Methods
-    
-    func checkChanges(sender: InputCell) {
-        switch sender.label.text! {
-            case "Адрес сервера":
-                vpnConfig.serverAddress = sender.textField.text
-                break
-            case "Имя группы":
-                vpnConfig.groupName = sender.textField.text
-                break
-            case "Общий ключ":
-                vpnConfig.sharedKey = sender.textField.text
-                break
-            case "Учетная запись":
-                vpnConfig.username = sender.textField.text
-                break
-            case "Пароль":
-                vpnConfig.password = sender.textField.text
-                break
-            default:
-                break
-        }
-    }
-    
     private func setValueForVPNField(fieldName: String, cell: InputCell) {
         switch fieldName {
         case "Адрес сервера":
@@ -153,6 +184,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
             cell.spanner.hidden = true
         }
         else {
+            delCell = cell
             cell.label.text = "Удалить конфигурацию"
             cell.label.textColor = UIColor.redColor()
             cell.spanner.hidden = true
@@ -181,7 +213,9 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
             break
         case 1:
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
-            testButtonTapped()
+            if vpnConfig.managerEnabled {
+                testButtonTapped()
+            }
             break
         case 2:
             tableView.deselectRowAtIndexPath(indexPath, animated: true)

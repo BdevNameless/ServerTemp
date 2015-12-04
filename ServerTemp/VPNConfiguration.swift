@@ -126,22 +126,17 @@ class VPNConfiguration {
     internal func removeConfiguration(handler: ((error: NSError?) -> Void)? = nil) {
         manager.removeFromPreferencesWithCompletionHandler() { (remError: NSError?) in
             let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
-            if remError == nil {
-                dispatch_after(delayTime, dispatch_get_main_queue()) {
+            dispatch_after(delayTime, dispatch_get_main_queue()) { [unowned self] in
+                if remError == nil {
                     print("VPN PREFERENCES REMOVED")
-                    if let action = handler {
-                        action(error: nil)
-                    }
+                    self.flushKeychain()
                 }
-            }
-            else {
-                dispatch_after(delayTime, dispatch_get_main_queue()) {
+                else {
                     print("ERROR WHILE REMOVING VPN PREFERENCES. ERROR : \(remError)")
-                    if let action = handler {
-                        action(error: remError)
-                    }
                 }
-                
+                if let action = handler {
+                    action(error: remError)
+                }
             }
         }
     }
@@ -178,6 +173,24 @@ class VPNConfiguration {
     
     
     //MARK: - Private Methods
+    private func flushKeychain() {
+        let sharedQuery:[NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey"]
+        let pwdQuery:[NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword"]
+        let s_status = SecItemDelete(sharedQuery)
+        if s_status == 0 {
+            print("VPN SHARED KEY FLUSHED")
+        }
+        else {
+            print("ERROR WHILE FLUSHING VPN SHARED KEY : \(s_status)")
+        }
+        let p_status = SecItemDelete(pwdQuery)
+        if p_status == 0 {
+            print("VPN PASSWORD FLUSHED")
+        } else {
+            print("ERROR WHILE FLISHING VPN PASSWORD : \(p_status)")
+        }
+    }
+    
     private func getPersistentRefForSharedKey() -> (NSData?, status: OSStatus?) {
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecReturnPersistentRef: kCFBooleanTrue]
         var result: AnyObject?
