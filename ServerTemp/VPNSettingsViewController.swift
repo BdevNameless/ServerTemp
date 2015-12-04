@@ -239,6 +239,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
         cell.label.text = setting
         if secureFields.contains(setting) {
             cell.textField.secureTextEntry = true
+            cell.textField.keyboardAppearance = .Dark
         }
         cell.selectionStyle = .None
         cell.textField.delegate = cell
