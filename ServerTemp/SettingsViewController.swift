@@ -47,7 +47,8 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         }
     }
     
-    //MARK: - InputCellDelegate
+    //MARK: - Internal Handlers
+    
     func checkChanges(sender: InputCell) {
         switch sender.label.text! {
             case "Пользователь":
@@ -70,7 +71,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         if (section == 0) {
             return ZabbixSettings.count
         }
-        return 2
+        return 1
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -79,14 +80,8 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
             configureCell(aCell, forIndexPath: indexPath)
             return aCell
         }
-        else if indexPath.row == 1 {
-            let aCell = tableView.dequeueReusableCellWithIdentifier("toVPNCell") as! DisclosureCell
-            aCell.label.text = "Настроить VPN"
-            return aCell
-        }
-        let aCell = tableView.dequeueReusableCellWithIdentifier("SwitchCell") as! SwitchCell
-        aCell.label.text = "Использовать VPN"
-        aCell.ui_switch.on = vpnConfig.managerEnabled
+        let aCell = tableView.dequeueReusableCellWithIdentifier("toVPNCell") as! DisclosureCell
+        aCell.label.text = "Настроить VPN"
         return aCell
     }
     

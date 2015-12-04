@@ -29,6 +29,7 @@ class VPNConfiguration {
         }
         set {
             manager.enabled = newValue
+            needToSave = true
         }
     }
     internal var connectionStatus: NEVPNStatus {
@@ -102,20 +103,22 @@ class VPNConfiguration {
                 if saveError == nil {
                     print("VPN PREFERENCES SECSESSFULY SAVED")
                     self.needToSave = false
-                    if handler != nil {
-                        handler!(error: nil)
-                    }
                 }
                 else {
                     print("ERROR WHILE SAVING VPN PREFERENCES : \(saveError)")
+                }
+                let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
+                dispatch_after(delayTime, dispatch_get_main_queue()) {
                     if handler != nil {
                         handler!(error: saveError)
                     }
                 }
             }
         }
-        if handler != nil {
-            handler!(error: nil)
+        else {
+            if handler != nil {
+                handler!(error: nil)
+            }
         }
     }
     
@@ -143,14 +146,18 @@ class VPNConfiguration {
     
     internal func testConnection() {
         saveConfiguration() { [unowned self] (error: NSError?) in
-            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
-            dispatch_after(delayTime, dispatch_get_main_queue()) {
-                try! self.startVPN()
+//            print(self.connectionStatus.rawValue)
+            if error == nil {
+                let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
+                dispatch_after(delayTime, dispatch_get_main_queue()) {
+                    try! self.startVPN()
+                }
             }
         }
     }
     
     internal func startVPN() throws {
+        print("TRY STARTING VPN TUNNEL")
         let statuses: Set<NEVPNStatus> = [.Disconnected, .Disconnecting]
         if statuses.contains(manager.connection.status) {
             do {
