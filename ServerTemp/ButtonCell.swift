@@ -9,6 +9,6 @@
 import UIKit
 
 class ButtonCell: UITableViewCell {
-    @IBOutlet weak var button: UIButton!
-
+    @IBOutlet weak var label: UILabel!
+    @IBOutlet weak var spanner: UIActivityIndicatorView!
 }

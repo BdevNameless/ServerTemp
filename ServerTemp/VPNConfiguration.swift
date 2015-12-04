@@ -136,12 +136,16 @@ class VPNConfiguration {
     
     internal func testConnection() {
         saveConfiguration() { [unowned self] (error: NSError?) in
-            try! self.startVPN()
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
+            dispatch_after(delayTime, dispatch_get_main_queue()) {
+                try! self.startVPN()
+            }
         }
     }
     
     internal func startVPN() throws {
-        if (manager.connection.status == .Disconnected) {
+        let statuses: Set<NEVPNStatus> = [.Disconnected, .Disconnecting]
+        if statuses.contains(manager.connection.status) {
             do {
                 try manager.connection.startVPNTunnel()
                 print("STARTING VPN TUNNEL")
@@ -153,7 +157,8 @@ class VPNConfiguration {
     }
     
     internal func stopVPN() {
-        if (manager.connection.status == .Connected) {
+        let statuses: Set<NEVPNStatus> = [.Connected, .Connecting, .Reasserting]
+        if statuses.contains(manager.connection.status) {
             print("STOPPING VPN TUNNEL")
             manager.connection.stopVPNTunnel()
         }

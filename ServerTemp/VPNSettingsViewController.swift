@@ -15,6 +15,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     //MARK: - Instance Variables
     private let VPNSettings = ["Адрес сервера", "Имя группы", "Общий ключ", "Учетная запись", "Пароль"]
     private let vpnConfig = VPNConfiguration()
+    private var testCell: ButtonCell? = nil
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -23,17 +24,33 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     
     internal func statusChanged(aNotif: NSNotification){
         print(vpnConfig.connectionStatus.rawValue)
-        if vpnConfig.connectionStatus.rawValue == 3 {
+        switch vpnConfig.connectionStatus.rawValue {
+        case 3:
             // USPEX
-            let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение по VPN установлено.", preferredStyle: .Alert)
+            testCell?.label.text = "Подключено"
+            let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение успешно установлено.", preferredStyle: .Alert)
             alertVC.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
             self.presentViewController(alertVC, animated: true) { [unowned self] in
                 self.vpnConfig.stopVPN()
             }
+            break
+        case 2:
+            testCell?.label.text = "Подключаюсь"
+            break
+        case 1:
+            view.userInteractionEnabled = true
+            testCell?.spanner.stopAnimating()
+            testCell?.label.text = "Проверить соединение"
+            break
+        default:
+            break
         }
     }
     
     internal func testButtonTapped() {
+        view.userInteractionEnabled = false
+        testCell?.spanner.startAnimating()
+        testCell?.spanner.hidden = false
         vpnConfig.testConnection()
     }
     
@@ -125,15 +142,15 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     private func configureButtonCell(cell: ButtonCell, forIndexPath indexPath: NSIndexPath) {
-        cell.selectionStyle = .None
         if indexPath.section == 1 {
-            cell.button.setTitle("Проверить соединение", forState: .Normal)
-            cell.button.addTarget(self, action: "testButtonTapped", forControlEvents: .TouchUpInside)
+            testCell = cell
+            cell.label.text = "Проверить соединение"
+            cell.spanner.hidden = true
         }
         else {
-            cell.button.setTitle("Удалить конфигурацию", forState: .Normal)
-            cell.button.setTitleColor(UIColor.redColor(), forState: .Normal)
-            cell.button.addTarget(self, action: "delButtonTapped", forControlEvents: .TouchUpInside)
+            cell.label.text = "Удалить конфигурацию"
+            cell.label.textColor = UIColor.redColor()
+            cell.spanner.hidden = true
         }
     }
     
@@ -152,9 +169,21 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        if indexPath.section == 0 {
+        switch indexPath.section {
+        case 0:
             let aCell = tableView.cellForRowAtIndexPath(indexPath)
             (aCell as! InputCell).textField.becomeFirstResponder()
+            break
+        case 1:
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            testButtonTapped()
+            break
+        case 2:
+            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            delButtonTapped()
+            break
+        default:
+            break
         }
     }
 }
