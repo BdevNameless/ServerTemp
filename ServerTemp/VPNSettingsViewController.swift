@@ -55,7 +55,12 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     internal func delButtonTapped() {
-        print("DEL THIS")
+        let alertVC = UIAlertController(title: "Удаление", message: "Вы уверены что хотите удалить настройки?", preferredStyle: .Alert)
+        alertVC.addAction(UIAlertAction(title: "Да", style: .Destructive) { (action: UIAlertAction) in
+            print("DEL THIS")
+        })
+        alertVC.addAction(UIAlertAction(title: "Нет", style: .Default, handler: nil))
+        presentViewController(alertVC, animated: true, completion: nil)
     }
     
     override func viewWillAppear(animated: Bool) {

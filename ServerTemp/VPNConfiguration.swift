@@ -123,13 +123,25 @@ class VPNConfiguration {
         loadPublicData()
     }
     
-    internal func removeConfiguration() {
-        manager.removeFromPreferencesWithCompletionHandler() { (error: NSError?) in
-            if error == nil {
-                print("VPN PREFERENCES REMOVED")
+    internal func removeConfiguration(handler: ((error: NSError?) -> Void)? = nil) {
+        manager.removeFromPreferencesWithCompletionHandler() { (remError: NSError?) in
+            let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
+            if remError == nil {
+                dispatch_after(delayTime, dispatch_get_main_queue()) {
+                    print("VPN PREFERENCES REMOVED")
+                    if let action = handler {
+                        action(error: nil)
+                    }
+                }
             }
             else {
-                print("ERROR WHILE REMOVING VPN PREFERENCES. ERROR : \(error)")
+                dispatch_after(delayTime, dispatch_get_main_queue()) {
+                    print("ERROR WHILE REMOVING VPN PREFERENCES. ERROR : \(remError)")
+                    if let action = handler {
+                        action(error: remError)
+                    }
+                }
+                
             }
         }
     }
