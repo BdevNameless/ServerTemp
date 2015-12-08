@@ -19,22 +19,22 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NnE-SU-yjt">
-                                <rect key="frame" x="20" y="72" width="560" height="77"/>
+                                <rect key="frame" x="20" y="28" width="560" height="77"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="77" id="K7K-v9-0q4"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
-                                <state key="normal" title="TOTAL CONNECTION">
+                                <state key="normal" title="BUTTON">
                                     <color key="titleColor" red="0.0" green="0.83066263689999997" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
                                     <action selector="connButtonTapped:" destination="Ma9-Mn-g4h" eventType="touchUpInside" id="x7U-zq-zPY"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dPS-ET-7BI">
-                                <rect key="frame" x="20" y="157" width="560" height="423"/>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="uvu" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dPS-ET-7BI">
+                                <rect key="frame" x="20" y="113" width="560" height="467"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="textColor" red="0.094117656349999995" green="0.75686281919999998" blue="0.082352943720000002" alpha="1" colorSpace="deviceRGB"/>
@@ -54,6 +54,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="dPS-ET-7BI" secondAttribute="trailing" id="ofL-du-j5f"/>
                         </constraints>
                     </view>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics" statusBarStyle="blackOpaque"/>
                     <connections>
                         <outlet property="connButton" destination="NnE-SU-yjt" id="FyB-1a-KKP"/>
                         <outlet property="textView" destination="dPS-ET-7BI" id="xN0-dy-qAU"/>

@@ -32,6 +32,16 @@ class ZabbixConfiguration {
             updatePassword(newValue)
         }
     }
+    internal var serverAddress: String? {
+        get {
+            return NSUserDefaults.standardUserDefaults().stringForKey("ZabbixServerAddress")
+        }
+        set {
+            let userDefaults = NSUserDefaults.standardUserDefaults()
+            userDefaults.setValue(newValue, forKey: "ZabbixServerAddress")
+            userDefaults.synchronize()
+        }
+    }
     
     
     //MARK: - Private Methods

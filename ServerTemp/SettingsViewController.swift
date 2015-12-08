@@ -11,7 +11,7 @@ import UIKit
 class SettingsViewController: UITableViewController, InputCellDelegate {
     
     //MARK: - Instance Variables
-    private let ZabbixSettings = ["Пользователь", "Пароль"]
+    private let ZabbixSettings = ["IP-адрес сервера","Пользователь", "Пароль"]
     private let vpnConfig = VPNConfiguration(true)
     private let zabbixConfig = ZabbixConfiguration()
     
@@ -36,14 +36,17 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     private func setValueForZabbixField(fieldName: String, cell: InputCell) {
         switch fieldName {
-        case "Пользователь":
-            cell.textField.text = zabbixConfig.username
-            break
-        case "Пароль":
-            cell.textField.text = zabbixConfig.password
-            break
-        default:
-            break
+            case "IP-адрес сервера":
+                cell.textField.text = zabbixConfig.serverAddress
+                break
+            case "Пользователь":
+                cell.textField.text = zabbixConfig.username
+                break
+            case "Пароль":
+                cell.textField.text = zabbixConfig.password
+                break
+            default:
+                break
         }
     }
     
@@ -51,6 +54,9 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     func checkChanges(sender: InputCell) {
         switch sender.label.text! {
+            case "IP-адрес сервера":
+                zabbixConfig.serverAddress = sender.textField.text
+                break
             case "Пользователь":
                 zabbixConfig.username = sender.textField.text
                 break

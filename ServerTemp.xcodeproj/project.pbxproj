@@ -25,6 +25,7 @@
 		11C23E551C0FFD30000D2C81 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E541C0FFD30000D2C81 /* SwitchCell.swift */; };
 		11C23E571C0FFD3E000D2C81 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E561C0FFD3E000D2C81 /* ButtonCell.swift */; };
 		11C23E591C0FFD6A000D2C81 /* DisclosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */; };
+		11F0D0A11C151C66004D5F55 /* ZabbixAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */; };
 		F250CC307916A3BBFF83E192 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30FF75A38604C3C4E3EFA18B /* Pods.framework */; };
 /* End PBXBuildFile section */
 
@@ -73,6 +74,7 @@
 		11C23E541C0FFD30000D2C81 /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		11C23E561C0FFD3E000D2C81 /* ButtonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonCell.swift; sourceTree = "<group>"; };
 		11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisclosureCell.swift; sourceTree = "<group>"; };
+		11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZabbixAPI.swift; sourceTree = "<group>"; };
 		1B7C98F0DE8C72E1D369175D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		30FF75A38604C3C4E3EFA18B /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFC43C8B3044A4E56F92E58B /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -133,12 +135,11 @@
 			children = (
 				11344CFE1C0D22D80049F287 /* ServerTemp.entitlements */,
 				11344CCE1C0D20E20049F287 /* AppDelegate.swift */,
-				11344D051C0D33300049F287 /* Cells */,
+				11F0D09E1C116FEC004D5F55 /* Views */,
 				11344D001C0D232A0049F287 /* Controllers */,
+				11F0D0A21C151C7A004D5F55 /* Model */,
 				11344CFF1C0D230C0049F287 /* UI */,
 				11344CDA1C0D20E20049F287 /* Info.plist */,
-				11344D011C0D234B0049F287 /* VPNConfiguration.swift */,
-				11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */,
 			);
 			path = ServerTemp;
 			sourceTree = "<group>";
@@ -174,8 +175,7 @@
 		11344D001C0D232A0049F287 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				11344D031C0D31630049F287 /* SettingsViewController.swift */,
-				11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */,
+				11F0D09F1C117003004D5F55 /* Settings */,
 				113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */,
 				11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */,
 			);
@@ -192,6 +192,41 @@
 				11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */,
 			);
 			name = Cells;
+			sourceTree = "<group>";
+		};
+		11F0D09E1C116FEC004D5F55 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				11344D051C0D33300049F287 /* Cells */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		11F0D09F1C117003004D5F55 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				11344D031C0D31630049F287 /* SettingsViewController.swift */,
+				11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		11F0D0A21C151C7A004D5F55 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				11F0D0A31C151C87004D5F55 /* Configurators */,
+				11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		11F0D0A31C151C87004D5F55 /* Configurators */ = {
+			isa = PBXGroup;
+			children = (
+				11344D011C0D234B0049F287 /* VPNConfiguration.swift */,
+				11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */,
+			);
+			name = Configurators;
 			sourceTree = "<group>";
 		};
 		3A0F30D8D7B0B227C6882A74 /* Pods */ = {
@@ -411,6 +446,7 @@
 				11C23E571C0FFD3E000D2C81 /* ButtonCell.swift in Sources */,
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
 				11C23E551C0FFD30000D2C81 /* SwitchCell.swift in Sources */,
+				11F0D0A11C151C66004D5F55 /* ZabbixAPI.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

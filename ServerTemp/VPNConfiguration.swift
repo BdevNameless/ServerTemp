@@ -122,8 +122,29 @@ class VPNConfiguration {
         }
     }
     
-    internal func loadConfigugarion() {
-        loadPublicData()
+    internal func loadConfigugarion(handler: ((error: NSError?) -> Void)? = nil) {
+        manager.loadFromPreferencesWithCompletionHandler() { [unowned self] (error: NSError?) in
+            if (error == nil) {
+                print("VPN PREFERENCES HAVE BEEN LOADED \(NSDate())")
+                if (self.manager.protocolConfiguration == nil) {
+                    print("NEW VPN PROTOCOL CONFIGURATION CREATED")
+                    let p = NEVPNProtocolIPSec()
+                    p.authenticationMethod = .SharedSecret
+                    p.disconnectOnSleep = false
+                    p.useExtendedAuthentication = true
+                    self.manager.protocolConfiguration = p
+                }
+                if handler != nil {
+                    handler!(error: nil)
+                }
+            }
+            else {
+                print("ERROR WHILE LOADING VPN PREFERENCES: \(error)")
+                if handler != nil {
+                    handler!(error: error)
+                }
+            }
+        }
     }
     
     internal func removeConfiguration(handler: ((error: NSError?) -> Void)? = nil) {
@@ -157,17 +178,26 @@ class VPNConfiguration {
     }
     
     internal func startVPN() throws {
-        print("TRY STARTING VPN TUNNEL")
-        let statuses: Set<NEVPNStatus> = [.Disconnected, .Disconnecting]
-        if statuses.contains(manager.connection.status) {
-            do {
-                try manager.connection.startVPNTunnel()
-                print("STARTING VPN TUNNEL")
+        if connectionStatus != .Invalid {
+            print("TRY STARTING VPN TUNNEL")
+            let statuses: Set<NEVPNStatus> = [.Disconnected, .Disconnecting]
+            if statuses.contains(manager.connection.status) {
+                do {
+                    try manager.connection.startVPNTunnel()
+                    print("STARTING VPN TUNNEL")
+                }
+                catch let error {
+                    throw error
+                }
             }
-            catch let error {
-                throw error
+            else {
+                print("VPN tunnel is already up.")
             }
         }
+        else {
+            print("Connection is Invalid.")
+        }
+        
     }
     
     internal func stopVPN() {
@@ -175,6 +205,9 @@ class VPNConfiguration {
         if statuses.contains(manager.connection.status) {
             print("STOPPING VPN TUNNEL")
             manager.connection.stopVPNTunnel()
+        }
+        else {
+            print("VPN tunnel is already down")
         }
     }
     
@@ -318,26 +351,6 @@ class VPNConfiguration {
             }
             else {
                 print("ERROR WHILE SAVING VPN PREFERENCES : \(error)")
-            }
-        }
-    }
-    
-    private func loadPublicData() {
-        manager.loadFromPreferencesWithCompletionHandler() { [unowned self] (error: NSError?) in
-            if (error == nil) {
-                print("VPN PREFERENCES HAVE BEEN LOADED \(NSDate())")
-                if (self.manager.protocolConfiguration == nil) {
-                    print("NEW VPN PROTOCOL CONFIGURATION CREATED")
-                    let p = NEVPNProtocolIPSec()
-                    p.authenticationMethod = .SharedSecret
-                    p.disconnectOnSleep = false
-                    p.useExtendedAuthentication = true
-                    self.manager.protocolConfiguration = p
-                }
-                print(self.manager.enabled)
-            }
-            else {
-                print("ERROR WHILE LOADING VPN PREFERENCES: \(error)")
             }
         }
     }
