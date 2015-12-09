@@ -32,6 +32,13 @@ class ZabbixManager {
     }()
     
     //MARK: - Internal Methods
+    internal func cancelCurrentRequest() {
+        if let cur_req = netManager.currentRequest {
+            cur_req.cancel()
+            netManager.currentRequest = nil
+        }
+    }
+    
     internal func login(handler: ((error: NSError?, result: JSON?) -> Void)?) {
         if zbxConfig.isValid {
             let params = [
@@ -49,21 +56,46 @@ class ZabbixManager {
     
     internal func freshTempFor300Serv(handler: ((error: NSError?, result: JSON?) -> Void)?) {
         guard token != nil else {
-            if handler != nil {
-                handler!(error: NSError(domain: zbxErrorDomain, code: -2, userInfo: [NSLocalizedDescriptionKey: "Zabbix authorization is needed."]), result: nil)
+            login() { [unowned self] (loginError: NSError?, result: JSON?) in
+                guard loginError == nil else {
+                    if handler != nil {
+                        handler!(error: loginError!, result: nil)
+                    }
+                    return
+                }
+                self.freshTempFor300Serv(handler)
             }
             return
         }
         let params = [
                 "output": "extend",
                 "history": 0,
-                "itemids": "23661",
-//                "itemids": ["23663", "23664"],
+                "itemids": ["23663", "23664"],
                 "sortfield": "clock",
                 "sortorder": "DESC",
                 "limit": 2
         ]
         performRequestForMethod(.GetHistory, withParams: params, handler: handler)
+    }
+    
+    internal func getItemsByID(id: [String], handler: ((error: NSError?, result: JSON?) -> Void)?) {
+        guard token != nil else {
+            login() { [unowned self] (loginError: NSError?, result: JSON?) in
+                guard loginError == nil else {
+                    if handler != nil {
+                        handler!(error: loginError!, result: nil)
+                    }
+                    return
+                }
+                self.getItemsByID(id, handler: handler)
+            }
+            return
+        }
+        let params: [String: AnyObject] = [
+            "output": "extend",
+            "itemids": id
+        ]
+        performRequestForMethod(.GetItem, withParams: params, handler: handler)
     }
     
     //MARK: - Private Methods
@@ -72,6 +104,7 @@ class ZabbixManager {
         case Login = "user.login"
         case GetHistory = "history.get"
         case GetHost = "host.get"
+        case GetItem = "item.get"
     }
     
     private func performRequestForMethod(method: APIMethod, withParams params: [String: AnyObject], handler: ((error: NSError?, result: JSON?) -> Void)?) {

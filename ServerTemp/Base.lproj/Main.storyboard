@@ -33,7 +33,7 @@
                                     <action selector="connButtonTapped:" destination="Ma9-Mn-g4h" eventType="touchUpInside" id="x7U-zq-zPY"/>
                                 </connections>
                             </button>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" text="uvu" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dPS-ET-7BI">
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleToFill" editable="NO" text="uvu" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="dPS-ET-7BI">
                                 <rect key="frame" x="20" y="113" width="560" height="467"/>
                                 <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
