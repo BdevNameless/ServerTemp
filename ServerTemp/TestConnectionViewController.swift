@@ -22,12 +22,12 @@ class TestConnectionViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var connButton: UIButton!
     @IBAction func connButtonTapped(sender: UIButton) {
-        zbxManager.login() { [unowned self] (loginError: NSError?) in
+        zbxManager.login() { [unowned self] (loginError: NSError?, res: JSON?) in
             guard loginError == nil else {
                 self.showAlertForError(loginError!)
                 return
             }
-            self.zbxManager.freshTempFor300Serv() { [unowned self] (tmpError: NSError?, res: [JSON]?) in
+            self.zbxManager.freshTempFor300Serv() { [unowned self] (tmpError: NSError?, res: JSON?) in
                 guard tmpError == nil else {
                     self.showAlertForError(tmpError!)
                     return

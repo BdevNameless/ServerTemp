@@ -31,50 +31,23 @@ class ZabbixManager {
         return nil
     }()
     
-    
     //MARK: - Internal Methods
-    internal func login(handler: ((error: NSError?) -> Void)?) {
+    internal func login(handler: ((error: NSError?, result: JSON?) -> Void)?) {
         if zbxConfig.isValid {
             let params = [
-                "jsonrpc": "2.0",
-                "method": "user.login",
-                "params": [
                     "user": zbxConfig.username!,
-                    "password": zbxConfig.password!,
-                ],
-                "id": 1
+                    "password": zbxConfig.password!
             ]
-            netManager.request(.POST, restURL!, parameters: params, encoding: .JSON).responseSWJSON() { [unowned self] (res: Response<JSON, NSError>) in
-                let reqError = res.result.error
-                guard reqError == nil else {
-                    if handler != nil {
-                        handler!(error: reqError!)
-                    }
-                    return
-                }
-                let json = res.result.value!
-                let jsonError = json["error"]
-                guard jsonError == nil else {
-                    if handler != nil {
-                        handler!(error: NSError(domain: self.zbxErrorDomain, code: jsonError["code"].int!, userInfo: [NSLocalizedDescriptionKey: jsonError["data"].string!]))
-                    }
-                    return
-                }
-                if handler != nil {
-                    self.token = json["result"].string!
-                    print(self.token)
-                    handler!(error: nil)
-                }
-            }
+            performRequestForMethod(.Login, withParams: params, handler: handler)
         }
         else{
             if handler != nil {
-                handler!(error: NSError(domain: zbxErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid Zabbix configuration. Check preferences."]))
+                handler!(error: NSError(domain: zbxErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid Zabbix configuration. Check preferences."]), result: nil)
             }
         }
     }
     
-    internal func freshTempFor300Serv(handler: ((error: NSError?, result: [JSON]?) -> Void)?) {
+    internal func freshTempFor300Serv(handler: ((error: NSError?, result: JSON?) -> Void)?) {
         guard token != nil else {
             if handler != nil {
                 handler!(error: NSError(domain: zbxErrorDomain, code: -2, userInfo: [NSLocalizedDescriptionKey: "Zabbix authorization is needed."]), result: nil)
@@ -82,20 +55,36 @@ class ZabbixManager {
             return
         }
         let params = [
-            "jsonrpc": "2.0",
-            "method": "history.get",
-            "params": [
                 "output": "extend",
                 "history": 0,
-                "itemids": ["23663", "23664"],
+                "itemids": "23661",
+//                "itemids": ["23663", "23664"],
                 "sortfield": "clock",
                 "sortorder": "DESC",
                 "limit": 2
-            ],
-            "auth": token!,
+        ]
+        performRequestForMethod(.GetHistory, withParams: params, handler: handler)
+    }
+    
+    //MARK: - Private Methods
+    
+    private enum APIMethod : String {
+        case Login = "user.login"
+        case GetHistory = "history.get"
+        case GetHost = "host.get"
+    }
+    
+    private func performRequestForMethod(method: APIMethod, withParams params: [String: AnyObject], handler: ((error: NSError?, result: JSON?) -> Void)?) {
+        var parameters: [String: AnyObject] = [
+            "jsonrpc": "2.0",
+            "method": method.rawValue,
+            "params": params,
             "id": 1
         ]
-        netManager.request(.POST, restURL!, parameters: (params as! [String : AnyObject]), encoding: .JSON).responseSWJSON() { [unowned self] (res: Response<JSON, NSError>) in
+        if ((token != nil)&&(method != .Login)) {
+            parameters["auth"] = token!
+        }
+        netManager.request(.POST, restURL!, parameters: parameters, encoding: .JSON).responseSWJSON() { [unowned self] (res: Response<JSON, NSError>) in
             let reqError = res.result.error
             guard reqError == nil else {
                 if handler != nil {
@@ -111,9 +100,15 @@ class ZabbixManager {
                 }
                 return
             }
-            let jsonResult = json["result"].arrayValue
+            let jsonResult = json["result"]
             if handler != nil {
-                handler!(error: nil, result: jsonResult)
+                if method == .Login {
+                    self.token = jsonResult.stringValue
+                    handler!(error: nil, result: nil)
+                }
+                else {
+                    handler!(error: nil, result: jsonResult)
+                }
             }
         }
     }
