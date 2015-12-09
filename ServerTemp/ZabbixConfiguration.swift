@@ -42,7 +42,9 @@ class ZabbixConfiguration {
             userDefaults.synchronize()
         }
     }
-    
+    internal var isValid: Bool {
+        return ((serverAddress != nil)&&(password != nil)&&(username != nil))
+    }
     
     //MARK: - Private Methods
     

@@ -19,6 +19,7 @@
 		11344D071C0D335D0049F287 /* InputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D061C0D335D0049F287 /* InputCell.swift */; };
 		11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */; };
 		113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */; };
+		1167314E1C17A2F900E4919E /* BDNetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1167314D1C17A2F900E4919E /* BDNetManager.swift */; };
 		11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */; };
 		11C23E511C0FB4E4000D2C81 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E501C0FB4E4000D2C81 /* MenuCell.swift */; };
 		11C23E531C0FFABA000D2C81 /* VPNSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */; };
@@ -68,6 +69,7 @@
 		113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestConnectionViewController.swift; sourceTree = "<group>"; };
 		113FD13C1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
 		113FD13D1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		1167314D1C17A2F900E4919E /* BDNetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BDNetManager.swift; sourceTree = "<group>"; };
 		11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuController.swift; sourceTree = "<group>"; };
 		11C23E501C0FB4E4000D2C81 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPNSettingsViewController.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 			children = (
 				11F0D0A31C151C87004D5F55 /* Configurators */,
 				11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */,
+				1167314D1C17A2F900E4919E /* BDNetManager.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -435,6 +438,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11344CCF1C0D20E20049F287 /* AppDelegate.swift in Sources */,
+				1167314E1C17A2F900E4919E /* BDNetManager.swift in Sources */,
 				11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */,
 				113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */,
 				11C23E531C0FFABA000D2C81 /* VPNSettingsViewController.swift in Sources */,

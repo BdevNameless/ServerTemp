@@ -70,7 +70,6 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     internal func statusChanged(aNotif: NSNotification){
-        print(vpnConfig.connectionStatus.rawValue)
         switch vpnConfig.connectionStatus.rawValue {
         case 3:
             // USPEX

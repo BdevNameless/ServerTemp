@@ -14,15 +14,26 @@ import SwiftyJSON
 
 class TestConnectionViewController: UIViewController {
     
-    private let vpnManager = VPNConfiguration()
-    private let zbxManager = ZabbixConfiguration()
+    private let vpnConfig = VPNConfiguration()
+    private let zbxConfig = ZabbixConfiguration()
+    private let zbxManager = ZabbixManager.sharedInstance
     
     //MARK: - Outlents
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var connButton: UIButton!
     @IBAction func connButtonTapped(sender: UIButton) {
-        ZabbixManager.sharedInstance.login() { [unowned self] (loginError: NSError?) in
-            self.addLog("\(loginError)")
+        zbxManager.login() { [unowned self] (loginError: NSError?) in
+            guard loginError == nil else {
+                self.showAlertForError(loginError!)
+                return
+            }
+            self.zbxManager.freshTempFor300Serv() { [unowned self] (tmpError: NSError?, res: [JSON]?) in
+                guard tmpError == nil else {
+                    self.showAlertForError(tmpError!)
+                    return
+                }
+                self.addLog("\(res!)")
+            }
         }
     }
     
@@ -30,35 +41,15 @@ class TestConnectionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setNeedsStatusBarAppearanceUpdate()
-        addHandlers()
         configureReveal()
         configureView()
-    }
-    
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
-        removeHandlers()
     }
     
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .LightContent
     }
     
-    //MARK: - Internal Handlers
-    
-    internal func vpnStatusChanged(aNotif: NSNotification) {
-        addLog("\(vpnManager.connectionStatus.rawValue)")
-    }
-    
     //MARK: - PrivateMethods
-    
-    private func addHandlers() {
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "vpnStatusChanged:", name: NEVPNStatusDidChangeNotification, object: nil)
-    }
-    
-    private func removeHandlers() {
-        NSNotificationCenter.defaultCenter().removeObserver(self)
-    }
     
     private func addLog(string: String) {
         textView.text = textView.text + ">" + string + "\n"
@@ -79,6 +70,13 @@ class TestConnectionViewController: UIViewController {
         textView.layer.borderWidth = 3.0
         textView.layer.borderColor = UIColor.greenColor().CGColor
         textView.text = ""
+    }
+    
+    private func showAlertForError(error: NSError) {
+        let message = error.userInfo["NSLocalizedDescription"] as? String
+        let alert = UIAlertController(title: error.domain, message: message, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(alert, animated: true, completion: nil)
     }
 }
 
