@@ -11,6 +11,21 @@ import Alamofire
 import SwiftyJSON
 
 
+class ReportValue {
+    
+    var value: Double? = nil
+    var date: NSDate? = nil
+
+    func description() -> String {
+        return "Record(value: \(value), date: \(date))"
+    }
+    
+    init(val: Double?, clock: NSDate?) {
+        value = val
+        date = clock
+    }
+}
+
 class ZabbixManager {
     //MARK: - Initialization
     static var sharedInstance = ZabbixManager()
@@ -54,30 +69,6 @@ class ZabbixManager {
         }
     }
     
-    internal func freshTempFor300Serv(handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        guard token != nil else {
-            login() { [unowned self] (loginError: NSError?, result: JSON?) in
-                guard loginError == nil else {
-                    if handler != nil {
-                        handler!(error: loginError!, result: nil)
-                    }
-                    return
-                }
-                self.freshTempFor300Serv(handler)
-            }
-            return
-        }
-        let params = [
-                "output": "extend",
-                "history": 0,
-                "itemids": ["23663", "23664"],
-                "sortfield": "clock",
-                "sortorder": "DESC",
-                "limit": 2
-        ]
-        performRequestForMethod(.GetHistory, withParams: params, handler: handler)
-    }
-    
     internal func getItemsByID(id: [String], handler: ((error: NSError?, result: JSON?) -> Void)?) {
         guard token != nil else {
             login() { [unowned self] (loginError: NSError?, result: JSON?) in
@@ -98,7 +89,123 @@ class ZabbixManager {
         performRequestForMethod(.GetItem, withParams: params, handler: handler)
     }
     
+    internal func getFresh300Report(handler: ((error: NSError?, result: [String: ReportValue]?) -> Void)?) {
+        guard token != nil else {
+            login() { [unowned self] (loginError: NSError?, result: JSON?) in
+                guard loginError == nil else {
+                    if handler != nil {
+                        handler!(error: loginError!, result: nil)
+                    }
+                    return
+                }
+                self.getFresh300Report(handler)
+            }
+            return
+        }
+        _freshTempFor300Serv() { (fetchError: NSError?, res: JSON?) in
+            guard fetchError == nil else {
+                if handler != nil {
+                    handler!(error: fetchError!, result: nil)
+                }
+                return
+            }
+            var response: [String: ReportValue] = [:]
+            let asArray = res!.arrayValue
+            for item in asArray {
+                let key = item["itemid"].stringValue
+                let report = ReportValue(val: item["value"].doubleValue, clock: NSDate(timeIntervalSince1970: item["clock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))))
+                response[key] = report
+            }
+            if handler != nil {
+                handler!(error: nil, result: response)
+            }
+        }
+        
+    }
+    
+    internal func get300History(hours: Int, handler: ((error: NSError?, result: [ReportValue]?) -> Void)?) {
+        guard token != nil else {
+            login() { [unowned self] (loginError: NSError?, result: JSON?) in
+                guard loginError == nil else {
+                    if handler != nil {
+                        handler!(error: loginError!, result: nil)
+                    }
+                    return
+                }
+                self.get300History(hours, handler: handler)
+            }
+            return
+        }
+        let now = NSDate()
+        let fromDate = String(Int(now.dateByAddingTimeInterval(Double(-(hours*3600))).timeIntervalSince1970))
+        print(now, now.dateByAddingTimeInterval(Double(-(hours*3600))))
+        var res1: [JSON] = []
+        var res2: [JSON] = []
+        _getItemHistory("23663", fromTimestamp: fromDate) { [unowned self] (error1: NSError?, result1: JSON?) in
+            guard error1 == nil else {
+                if handler != nil {
+                    handler!(error: error1, result: nil)
+                }
+                return
+            }
+            res1 = result1!.arrayValue
+            self._getItemHistory("23664", fromTimestamp: fromDate) { (error2: NSError?, result2: JSON?) in
+                guard error2 == nil else {
+                    if handler != nil {
+                        handler!(error: error2, result: nil)
+                    }
+                    return
+                }
+                res2 = result2!.arrayValue
+                var delta = res2.count - res1.count
+                print(delta)
+                if delta != 0 {
+                    while delta > 0 {
+                        res2.removeFirst()
+                        --delta
+                    }
+                }
+                let step = res2.count/hours
+                var i = 0
+                var response: [ReportValue] = []
+                while i < res2.count {
+                    let aver = (res1[i]["value"].doubleValue + res2[i]["value"].doubleValue)/2
+                    let date = NSDate(timeIntervalSince1970: res2[i]["clock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate())))
+                    response.append(ReportValue(val: aver, clock: date))
+                    i += step
+                }
+                if handler != nil {
+                    handler!(error: nil, result: response)
+                }
+            }
+        }
+    }
+    
     //MARK: - Private Methods
+    
+    private func _freshTempFor300Serv(handler: ((error: NSError?, result: JSON?) -> Void)?) {
+        let params = [
+            "output": "extend",
+            "history": 0,
+            "itemids": ["23663", "23664"],
+            "sortfield": "clock",
+            "sortorder": "DESC",
+            "limit": 2
+        ]
+        performRequestForMethod(.GetHistory, withParams: params, handler: handler)
+    }
+    
+    private func _getItemHistory(itemid: String, fromTimestamp from_time: String, handler: ((error: NSError?, result: JSON?) -> Void)?) {
+        let params : [String: AnyObject] = [
+            "output": "extend",
+            "history": 0,
+            "itemids": itemid,
+            "sortfield": "clock",
+            "sortorder": "DESC",
+            "time_from": from_time
+        ]
+        performRequestForMethod(.GetHistory, withParams: params, handler: handler)
+    }
     
     private enum APIMethod : String {
         case Login = "user.login"

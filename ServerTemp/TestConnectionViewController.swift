@@ -22,18 +22,22 @@ class TestConnectionViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var connButton: UIButton!
     @IBAction func connButtonTapped(sender: UIButton) {
-        zbxManager.freshTempFor300Serv() { [unowned self] (fetchError: NSError?, res: JSON?) in
+//        zbxManager.get300History(2) { [unowned self] (fetchError: NSError?, res: [ReportValue]?) in
+//            guard fetchError == nil else {
+//                self.showAlertForError(fetchError!)
+//                return
+//            }
+//            for report in res! {
+//                self.addLog(report.description())
+//            }
+//        }
+        zbxManager.getFresh300Report() { [unowned self] (fetchError: NSError?, res: [String: ReportValue]?) in
             guard fetchError == nil else {
                 self.showAlertForError(fetchError!)
                 return
             }
-            self.addLog("\(res)")
-            let array = res!.arrayValue
-            for item in array {
-                let formatter = NSDateFormatter()
-                formatter.locale = NSLocale.currentLocale()
-                formatter.dateFormat = "dd MMMM yyyy hh:mm:ss"
-                self.addLog(formatter.stringFromDate(NSDate(timeIntervalSince1970: item["clock"].doubleValue)))
+            for item in res!.values {
+                self.addLog(item.description())
             }
         }
     }
