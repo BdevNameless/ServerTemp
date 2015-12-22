@@ -20,6 +20,10 @@
 		11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11344D081C0D817C0049F287 /* ZabbixConfiguration.swift */; };
 		113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */; };
 		1167314E1C17A2F900E4919E /* BDNetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1167314D1C17A2F900E4919E /* BDNetManager.swift */; };
+		11B8F7E51C28E30C000CE221 /* AnimatedScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */; };
+		11B8F7E71C28E31F000CE221 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E61C28E31F000CE221 /* GraphView.swift */; };
+		11B8F7EA1C28E367000CE221 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E91C28E367000CE221 /* ViewController.swift */; };
+		11B8F7EC1C28E44B000CE221 /* TempLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7EB1C28E44B000CE221 /* TempLabel.swift */; };
 		11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */; };
 		11C23E511C0FB4E4000D2C81 /* MenuCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E501C0FB4E4000D2C81 /* MenuCell.swift */; };
 		11C23E531C0FFABA000D2C81 /* VPNSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */; };
@@ -70,6 +74,10 @@
 		113FD13C1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Main.strings; sourceTree = "<group>"; };
 		113FD13D1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		1167314D1C17A2F900E4919E /* BDNetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BDNetManager.swift; sourceTree = "<group>"; };
+		11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedScale.swift; sourceTree = "<group>"; };
+		11B8F7E61C28E31F000CE221 /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
+		11B8F7E91C28E367000CE221 /* ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		11B8F7EB1C28E44B000CE221 /* TempLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TempLabel.swift; sourceTree = "<group>"; };
 		11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainMenuController.swift; sourceTree = "<group>"; };
 		11C23E501C0FB4E4000D2C81 /* MenuCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuCell.swift; sourceTree = "<group>"; };
 		11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VPNSettingsViewController.swift; sourceTree = "<group>"; };
@@ -177,9 +185,10 @@
 		11344D001C0D232A0049F287 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				11F0D09F1C117003004D5F55 /* Settings */,
+				11B8F7E91C28E367000CE221 /* ViewController.swift */,
 				113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */,
 				11C23E4E1C0EA141000D2C81 /* MainMenuController.swift */,
+				11F0D09F1C117003004D5F55 /* Settings */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -196,9 +205,20 @@
 			name = Cells;
 			sourceTree = "<group>";
 		};
+		11B8F7E81C28E326000CE221 /* CG Views */ = {
+			isa = PBXGroup;
+			children = (
+				11B8F7EB1C28E44B000CE221 /* TempLabel.swift */,
+				11B8F7E61C28E31F000CE221 /* GraphView.swift */,
+				11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */,
+			);
+			name = "CG Views";
+			sourceTree = "<group>";
+		};
 		11F0D09E1C116FEC004D5F55 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				11B8F7E81C28E326000CE221 /* CG Views */,
 				11344D051C0D33300049F287 /* Cells */,
 			);
 			name = Views;
@@ -441,16 +461,20 @@
 				1167314E1C17A2F900E4919E /* BDNetManager.swift in Sources */,
 				11344D091C0D817C0049F287 /* ZabbixConfiguration.swift in Sources */,
 				113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */,
+				11B8F7EC1C28E44B000CE221 /* TempLabel.swift in Sources */,
 				11C23E531C0FFABA000D2C81 /* VPNSettingsViewController.swift in Sources */,
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
 				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
+				11B8F7E71C28E31F000CE221 /* GraphView.swift in Sources */,
 				11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */,
+				11B8F7EA1C28E367000CE221 /* ViewController.swift in Sources */,
 				11C23E511C0FB4E4000D2C81 /* MenuCell.swift in Sources */,
 				11C23E591C0FFD6A000D2C81 /* DisclosureCell.swift in Sources */,
 				11C23E571C0FFD3E000D2C81 /* ButtonCell.swift in Sources */,
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
 				11C23E551C0FFD30000D2C81 /* SwitchCell.swift in Sources */,
 				11F0D0A11C151C66004D5F55 /* ZabbixAPI.swift in Sources */,
+				11B8F7E51C28E30C000CE221 /* AnimatedScale.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

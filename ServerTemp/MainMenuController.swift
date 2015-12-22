@@ -10,7 +10,7 @@ import UIKit
 
 class MainMenuController: UITableViewController {
     
-    private let menuItems = ["Тест VPN","Настройки"]
+    private let menuItems = ["Серверная 300" , "Тест VPN","Настройки"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,12 +32,16 @@ class MainMenuController: UITableViewController {
     }
     
     private func configureCell(cell: MenuCell, forIndexPath indexPath: NSIndexPath) {
+        cell.backgroundColor = UIColor.clearColor()
         cell.menuLabel.text = menuItems[indexPath.row]
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         switch menuItems[indexPath.row] {
+            case "Серверная 300":
+                self.performSegueWithIdentifier("push300Serv", sender: self)
+                break
             case "Тест VPN":
                 self.performSegueWithIdentifier("pushVPNTest", sender: self)
                 break

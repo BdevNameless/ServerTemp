@@ -22,15 +22,6 @@ class TestConnectionViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var connButton: UIButton!
     @IBAction func connButtonTapped(sender: UIButton) {
-//        zbxManager.get300History(2) { [unowned self] (fetchError: NSError?, res: [ReportValue]?) in
-//            guard fetchError == nil else {
-//                self.showAlertForError(fetchError!)
-//                return
-//            }
-//            for report in res! {
-//                self.addLog(report.description())
-//            }
-//        }
         zbxManager.getFresh300Report() { [unowned self] (fetchError: NSError?, res: [String: ReportValue]?) in
             guard fetchError == nil else {
                 self.showAlertForError(fetchError!)

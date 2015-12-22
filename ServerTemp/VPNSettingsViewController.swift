@@ -18,6 +18,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     private var testCell: ButtonCell? = nil
     private var delCell: ButtonCell? = nil
     private var vpnSwitch: UISwitch? = nil
+    private var isChecking: Bool = false
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -33,7 +34,6 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
         super.viewWillDisappear(animated)
         NSNotificationCenter.defaultCenter().removeObserver(self, name: NEVPNStatusDidChangeNotification, object: nil)
         vpnConfig.saveConfiguration()
-        vpnConfig.stopVPN()
     }
     
     //MARK: - Internal Handlers
@@ -70,9 +70,13 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     internal func statusChanged(aNotif: NSNotification){
+        guard isChecking else {
+            return
+        }
         switch vpnConfig.connectionStatus.rawValue {
         case 3:
             // USPEX
+            isChecking = false
             testCell?.label.text = "Подключено"
             let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение успешно установлено.", preferredStyle: .Alert)
             alertVC.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
@@ -102,19 +106,21 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     private func testButtonTapped() {
-//        vpnConfig.testConnection()
+        isChecking = true
         vpnConfig.saveConfiguration() { [unowned self] (saveError: NSError?) in
             if saveError == nil {
                 if (self.vpnConfig.connectionStatus.rawValue != 0) {
                     try! self.vpnConfig.startVPN()
                 }
                 else {
+                    self.isChecking = false
                     let alert = UIAlertController(title: "Подключение VPN", message: "Некорректные данные", preferredStyle: .Alert)
                     alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
                     self.presentViewController(alert, animated: true, completion: nil)
                 }
             }
             else {
+                self.isChecking = false
                 self.showAlertForError(saveError!)
                 self.tableView.reloadData()
             }
