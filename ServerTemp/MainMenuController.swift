@@ -17,6 +17,10 @@ class MainMenuController: UITableViewController {
         tableView.reloadData()
     }
     
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
+    }
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }

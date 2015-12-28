@@ -56,7 +56,6 @@ class TestConnectionViewController: UIViewController {
     }
     
     private func configureView() {
-        view.backgroundColor = UIColor.blackColor()
         connButton.setTitle("BUTTON", forState: .Normal)
         connButton.layer.borderWidth = 2.0
         connButton.layer.cornerRadius = 15.0

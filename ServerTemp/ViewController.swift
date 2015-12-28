@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MBProgressHUD
 
 class ViewController: UIViewController {
     @IBOutlet weak var leftScaleView: AnimatedScale!
@@ -17,25 +18,22 @@ class ViewController: UIViewController {
     @IBOutlet weak var maxTempLabel: UILabel!
     @IBOutlet weak var midTempLabel: UILabel!
     @IBOutlet weak var graphView: GraphView!
+    private var progressHUD: MBProgressHUD? = nil
+    private let zbxManager = ZabbixManager.sharedInstance
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureReveal()
-        leftScaleView.setValue(0, animated: false)
-        rightScaleView.setValue(0, animated: false)
-        rightScaleView.animationDuration = 2
-        leftScaleView.animationDuration = 2
-        
-        let time = dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC)))
-        dispatch_after(
-            time,
-            dispatch_get_main_queue()) { [unowned self] in
-                self.leftScaleView.setValue(22, animated: true)
-                self.rightScaleView.setValue(19, animated: true)
-        }
-
-        // Do any additional setup after loading the view, typically from a nib.
         configureView()
+    }
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        updateData()
+    }
+    
+    override func preferredStatusBarStyle() -> UIStatusBarStyle {
+        return .LightContent
     }
     
     private func configureReveal() {
@@ -43,13 +41,46 @@ class ViewController: UIViewController {
     }
 
     private func configureView() {
+        leftScaleView.setValue(0, animated: false)
+        rightScaleView.setValue(0, animated: false)
+        rightScaleView.animationDuration = 1.5
+        leftScaleView.animationDuration = 1.5
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "orientationChanged:", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        progressHUD = MBProgressHUD(view: view)
     }
     
     internal func orientationChanged(aNofif: NSNotification) {
         leftScaleView.setNeedsDisplayInRect(leftScaleView.bounds)
         rightScaleView.setNeedsDisplayInRect(rightScaleView.bounds)
         graphView.setNeedsDisplayInRect(graphView.bounds)
+    }
+    
+    private func updateData() {
+        if progressHUD != nil {
+            view.addSubview(progressHUD!)
+            progressHUD!.removeFromSuperViewOnHide = true
+            progressHUD!.show(true)
+        }
+        zbxManager.getFresh300Report() { [unowned self] (fetchError: NSError?, result: [String: ReportValue]?) in
+            if self.progressHUD != nil {
+                self.progressHUD!.hide(true)
+            }
+            guard fetchError == nil else {
+                self.showAlertForError(fetchError!)
+                return
+            }
+            self.leftScaleView.setValue(result!["23663"]!.value!, animated: true)
+            self.leftTempLabel.temperature = result!["23663"]!.value!
+            self.rightScaleView.setValue(result!["23664"]!.value!, animated: true)
+            self.rightTempLabel.temperature = result!["23664"]!.value!
+        }
+    }
+    
+    private func showAlertForError(error: NSError) {
+        let message = error.userInfo["NSLocalizedDescription"] as? String
+        let alert = UIAlertController(title: error.domain, message: message, preferredStyle: .Alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+        presentViewController(alert, animated: true, completion: nil)
     }
 
 }

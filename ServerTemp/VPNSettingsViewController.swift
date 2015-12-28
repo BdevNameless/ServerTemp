@@ -76,7 +76,6 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
         switch vpnConfig.connectionStatus.rawValue {
         case 3:
             // USPEX
-            isChecking = false
             testCell?.label.text = "Подключено"
             let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение успешно установлено.", preferredStyle: .Alert)
             alertVC.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
@@ -91,6 +90,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
             testCell?.label.text = "Подключаюсь"
             break
         case 1:
+            isChecking = false
             view.userInteractionEnabled = true
             testCell?.spanner.stopAnimating()
             testCell?.label.text = "Проверить соединение"

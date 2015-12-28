@@ -21,7 +21,7 @@ import UIKit
     }
     
     //MARK: - Attributes
-    private let data: [Double] = [23,24,26,25,23,19.5,18,20,22,23,20,19.5]
+    private let data: [Double] = []
     private let dates: [NSDate] = []
     private var labels: [UILabel] = []
     
@@ -72,39 +72,41 @@ import UIKit
         topline.moveToPoint(CGPoint(x: graphLeftMargin, y: bounds.height - graphBotOffset))
         topline.addLineToPoint(CGPoint(x: bounds.width - graphRightMargin, y: bounds.height - graphBotOffset))
         topline.stroke()
-        // GRAPHIC LINE
-        let graphPath = UIBezierPath()
-        graphPath.moveToPoint(pointForValue(0))
-        for i in 1...data.count-1 {
-            graphPath.addLineToPoint(pointForValue(i))
+        if (data.count > 0)&&(data.count == dates.count) {
+            // GRAPHIC LINE
+            let graphPath = UIBezierPath()
+            graphPath.moveToPoint(pointForValue(0))
+            for i in 1...data.count-1 {
+                graphPath.addLineToPoint(pointForValue(i))
+            }
+            graphPath.lineWidth = graphLineWidth
+            graphLineColor.setStroke()
+            graphPath.stroke()
+            // UNDERLINE GRADIENT
+            CGContextSaveGState(context)
+            let gClipPath = graphPath.copy()
+            gClipPath.addLineToPoint(CGPoint(x: bounds.width - graphRightMargin, y: bounds.height - graphBotOffset))
+            gClipPath.addLineToPoint(CGPoint(x: graphLeftMargin, y: bounds.height - graphBotOffset))
+            gClipPath.closePath()
+            gClipPath.addClip()
+            let unlineGradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [graphGradColor1.CGColor, graphGradColor2.CGColor], [0.0, 1.0])
+            CGContextDrawLinearGradient(context,
+                unlineGradient,
+                CGPoint(x: graphLeftMargin, y: graphTopOffset),
+                CGPoint(x: graphLeftMargin, y: bounds.height - areaBotOffset - graphBotOffset),
+                .DrawsAfterEndLocation)
+            CGContextRestoreGState(context)
+            // CIRCLES
+            graphLineColor.setFill()
+            for i in 0...data.count-1 {
+                var point = pointForValue(i)
+                point.x -= graphCircleSize/2
+                point.y -= graphCircleSize/2
+                let circle = UIBezierPath(ovalInRect: CGRect(origin: point, size: CGSize(width: graphCircleSize, height: graphCircleSize)))
+                circle.fill()
+            }
+            updateLabels()
         }
-        graphPath.lineWidth = graphLineWidth
-        graphLineColor.setStroke()
-        graphPath.stroke()
-        // UNDERLINE GRADIENT
-        CGContextSaveGState(context)
-        let gClipPath = graphPath.copy()
-        gClipPath.addLineToPoint(CGPoint(x: bounds.width - graphRightMargin, y: bounds.height - graphBotOffset))
-        gClipPath.addLineToPoint(CGPoint(x: graphLeftMargin, y: bounds.height - graphBotOffset))
-        gClipPath.closePath()
-        gClipPath.addClip()
-        let unlineGradient = CGGradientCreateWithColors(CGColorSpaceCreateDeviceRGB(), [graphGradColor1.CGColor, graphGradColor2.CGColor], [0.0, 1.0])
-        CGContextDrawLinearGradient(context,
-            unlineGradient,
-            CGPoint(x: graphLeftMargin, y: graphTopOffset),
-            CGPoint(x: graphLeftMargin, y: bounds.height - areaBotOffset - graphBotOffset),
-            .DrawsAfterEndLocation)
-        CGContextRestoreGState(context)
-        // CIRCLES
-        graphLineColor.setFill()
-        for i in 0...data.count-1 {
-            var point = pointForValue(i)
-            point.x -= graphCircleSize/2
-            point.y -= graphCircleSize/2
-            let circle = UIBezierPath(ovalInRect: CGRect(origin: point, size: CGSize(width: graphCircleSize, height: graphCircleSize)))
-            circle.fill()
-        }
-        updateLabels()
     }
     
     //MARK: - Private Methods
@@ -153,7 +155,7 @@ import UIKit
         for i in 0..<data.count {
             let newLabel = UILabel(frame: CGRect(x: xForColumn(i) - graphLeftMargin, y: bounds.height - graphBotOffset + 7, width: graphWidth() / CGFloat(data.count - 1), height: 10))
             newLabel.text = "\(hours)"
-            newLabel.textColor = UIColor.greenColor()
+            newLabel.textColor = UIColor.init(red: (128 / 255), green: 1.0, blue: 0.0, alpha: 1.0)
             newLabel.font = newLabel.font.fontWithSize(10)
             addSubview(newLabel)
             labels.append(newLabel)
