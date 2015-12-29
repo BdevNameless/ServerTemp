@@ -21,9 +21,22 @@ import UIKit
     }
     
     //MARK: - Attributes
-    private let data: [Double] = []
-    private let dates: [NSDate] = []
+    private var data: [Double] = []
+    private var dates: [NSDate] = []
     private var labels: [UILabel] = []
+    
+    internal var report: [ReportValue] = [] {
+        didSet {
+            report.sortInPlace() { (rep1, rep2) in
+                return rep1.date?.timeIntervalSince1970 < rep2.date?.timeIntervalSince1970
+            }
+            for item in report {
+                data.append(item.value!)
+                dates.append(item.date!)
+            }
+            setNeedsDisplayInRect(bounds)
+        }
+    }
     
     @IBInspectable var areaTopOffset: CGFloat = 10
     @IBInspectable var areaBotOffset: CGFloat = 10
@@ -150,16 +163,23 @@ import UIKit
         }
     }
     
+    lazy private var hoursDateFormatter: NSDateFormatter = {
+        let formatter = NSDateFormatter()
+        formatter.timeZone = NSTimeZone(forSecondsFromGMT: 0)
+        formatter.dateFormat = "HH"
+        return formatter
+    }()
+    
     private func addLabels() {
-        var hours = 8
-        for i in 0..<data.count {
+        for i in 0..<dates.count {
             let newLabel = UILabel(frame: CGRect(x: xForColumn(i) - graphLeftMargin, y: bounds.height - graphBotOffset + 7, width: graphWidth() / CGFloat(data.count - 1), height: 10))
-            newLabel.text = "\(hours)"
+            print(dates[i])
+            print(hoursDateFormatter.stringFromDate(dates[i]))
+            newLabel.text = hoursDateFormatter.stringFromDate(dates[i])
             newLabel.textColor = UIColor.init(red: (128 / 255), green: 1.0, blue: 0.0, alpha: 1.0)
             newLabel.font = newLabel.font.fontWithSize(10)
             addSubview(newLabel)
             labels.append(newLabel)
-            hours++
         }
         setNeedsDisplay()
     }

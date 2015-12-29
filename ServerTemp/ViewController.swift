@@ -18,8 +18,25 @@ class ViewController: UIViewController {
     @IBOutlet weak var maxTempLabel: UILabel!
     @IBOutlet weak var midTempLabel: UILabel!
     @IBOutlet weak var graphView: GraphView!
+    
     private var progressHUD: MBProgressHUD? = nil
     private let zbxManager = ZabbixManager.sharedInstance
+    private var temp23663: ReportValue? = nil {
+        didSet {
+            if temp23663 != nil {
+                leftScaleView.setValue(temp23663!.value!, animated: true)
+                leftTempLabel.temperature = temp23663!.value!
+            }
+        }
+    }
+    private var temp23664: ReportValue? = nil {
+        didSet {
+            if temp23664 != nil {
+                rightScaleView.setValue(temp23664!.value!, animated: true)
+                rightTempLabel.temperature = temp23664!.value!
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -61,19 +78,63 @@ class ViewController: UIViewController {
             progressHUD!.removeFromSuperViewOnHide = true
             progressHUD!.show(true)
         }
-        zbxManager.getFresh300Report() { [unowned self] (fetchError: NSError?, result: [String: ReportValue]?) in
-            if self.progressHUD != nil {
-                self.progressHUD!.hide(true)
+        let fetchQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+        let fetchGroup = dispatch_group_create()
+        var freshResult: [String: ReportValue]? = nil
+        var historyResult: [ReportValue]? = nil
+        dispatch_async(fetchQueue) { [unowned self] in
+            dispatch_group_enter(fetchGroup)
+            self.zbxManager.getFresh300Report() { (fetchError: NSError?, result: [String: ReportValue]?) in
+                if fetchError != nil {
+                    dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+                        self.showAlertForError(fetchError!)
+                    }
+                }
+                if result != nil {
+                    freshResult = result!
+                }
+                dispatch_group_leave(fetchGroup)
             }
-            guard fetchError == nil else {
-                self.showAlertForError(fetchError!)
-                return
+            dispatch_group_enter(fetchGroup)
+            self.zbxManager.get300History(10) { (fetchError: NSError?, result: [ReportValue]?) in
+                if fetchError != nil {
+                    dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+                        self.showAlertForError(fetchError!)
+                    }
+                }
+                if result != nil {
+                    historyResult = result!
+                }
+                dispatch_group_leave(fetchGroup)
             }
-            self.leftScaleView.setValue(result!["23663"]!.value!, animated: true)
-            self.leftTempLabel.temperature = result!["23663"]!.value!
-            self.rightScaleView.setValue(result!["23664"]!.value!, animated: true)
-            self.rightTempLabel.temperature = result!["23664"]!.value!
+            dispatch_group_wait(fetchGroup, DISPATCH_TIME_FOREVER)
+            dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+                if self.progressHUD != nil {
+                    self.progressHUD!.hide(true)
+                }
+                if freshResult != nil {
+                    self.temp23663 = freshResult!["23663"]
+                    self.temp23664 = freshResult!["23664"]
+                }
+                if historyResult != nil {
+                    self.graphView.report = historyResult!
+                    self.updateLabelsWithData(historyResult!)
+                }
+            }
         }
+    }
+    
+    private func updateLabelsWithData(report: [ReportValue]) {
+        var temps: [Double] = []
+        var aver: Double = 0
+        for item in report {
+            temps.append(item.value!)
+            aver += item.value!
+        }
+        averageTempLabel.text = String(format: "%.2f ℃", aver / Double(temps.count))
+        midTempLabel.text = String(format: "%.1f", 15 + ((temps.maxElement()! - 15) / 2))
+        maxTempLabel.text = "\(temps.maxElement()!)"
+        
     }
     
     private func showAlertForError(error: NSError) {

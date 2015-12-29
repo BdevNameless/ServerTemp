@@ -22,15 +22,68 @@ class TestConnectionViewController: UIViewController {
     @IBOutlet weak var textView: UITextView!
     @IBOutlet weak var connButton: UIButton!
     @IBAction func connButtonTapped(sender: UIButton) {
-        zbxManager.getFresh300Report() { [unowned self] (fetchError: NSError?, res: [String: ReportValue]?) in
-            guard fetchError == nil else {
-                self.showAlertForError(fetchError!)
-                return
+        let fetchQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+        let fetchGroup = dispatch_group_create()
+        var freshResult: [String: ReportValue]? = nil
+        var historyResult: [ReportValue]? = nil
+        dispatch_async(fetchQueue) { [unowned self] in
+            dispatch_group_enter(fetchGroup)
+            self.zbxManager.getFresh300Report() { (fetchError: NSError?, result: [String: ReportValue]?) in
+                if result != nil {
+                    freshResult = result!
+                }
+                dispatch_group_leave(fetchGroup)
             }
-            for item in res!.values {
-                self.addLog(item.description())
+            dispatch_group_enter(fetchGroup)
+            self.zbxManager.get300History(10) { (fetchError: NSError?, result: [ReportValue]?) in
+                if result != nil {
+                    historyResult = result!
+                }
+                dispatch_group_leave(fetchGroup)
+            }
+            dispatch_group_wait(fetchGroup, DISPATCH_TIME_FOREVER)
+            dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+                if freshResult != nil {
+                    for item in freshResult!.values {
+                        self.addLog(item.description())
+                    }
+                }
+                if historyResult != nil {
+                    for item in historyResult! {
+                        self.addLog(item.description())
+                    }
+                }
             }
         }
+//        dispatch_group_async(fetchGroup, fetchQueue) { [unowned self] in
+//            print("starting 1")
+//            self.zbxManager.getFresh300Report() { (fetchError: NSError?, result: [String: ReportValue]?) in
+//                if result != nil {
+//                    freshResult = result!
+//                }
+//            }
+//        }
+//        dispatch_group_async(fetchGroup, fetchQueue) { [unowned self] in
+//            print("startring 2")
+//            self.zbxManager.get300History(10) { (fetchError: NSError?, result: [ReportValue]?) in
+//                if result != nil {
+//                    historyResult = result!
+//                }
+//            }
+//        }
+//        dispatch_group_notify(fetchGroup, dispatch_get_main_queue()) { [unowned self] in
+//            print("LOLOLO")
+//            if freshResult != nil {
+//                for item in freshResult!.values {
+//                    self.addLog(item.description())
+//                }
+//            }
+//            if historyResult != nil {
+//                for item in historyResult! {
+//                    self.addLog(item.description())
+//                }
+//            }
+//        }
     }
     
     //MARK: - ViewController Methods
