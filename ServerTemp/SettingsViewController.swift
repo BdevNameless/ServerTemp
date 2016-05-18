@@ -109,7 +109,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
         }
         cell.selectionStyle = .None
         cell.textField.delegate = cell
-        cell.textField.addTarget(cell, action: "printAction", forControlEvents: .EditingDidEnd)
+        cell.textField.addTarget(cell, action: #selector(InputCell.printAction), forControlEvents: .EditingDidEnd)
         cell.delegate = self
     }
     

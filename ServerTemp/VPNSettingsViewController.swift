@@ -27,7 +27,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "statusChanged:", name: NEVPNStatusDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(VPNSettingsViewController.statusChanged(_:)), name: NEVPNStatusDidChangeNotification, object: nil)
     }
     
     override func viewWillDisappear(animated: Bool) {
@@ -215,7 +215,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
             aCell.label.text = "Использовать VPN"
             vpnSwitch = aCell.ui_switch
             aCell.ui_switch.on = vpnConfig.managerEnabled
-            aCell.ui_switch.addTarget(self, action: "switchChanged", forControlEvents: .ValueChanged)
+            aCell.ui_switch.addTarget(self, action: #selector(VPNSettingsViewController.switchChanged), forControlEvents: .ValueChanged)
             return aCell
         }
         let aCell = tableView.dequeueReusableCellWithIdentifier("ButtonCell") as! ButtonCell
@@ -248,7 +248,7 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
         }
         cell.selectionStyle = .None
         cell.textField.delegate = cell
-        cell.textField.addTarget(cell, action: "printAction", forControlEvents: .EditingDidEnd)
+        cell.textField.addTarget(cell, action: #selector(InputCell.printAction), forControlEvents: .EditingDidEnd)
         cell.delegate = self
     }
     

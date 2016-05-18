@@ -34,7 +34,7 @@ class ZabbixManager {
         
     }
     
-    //MARK: - Private Attribute
+    //MARK: - Private Attributes
     private let netManager = BDNetManager.sharedManager
     private let zbxConfig = ZabbixConfiguration()
     private var token: String? = nil
@@ -162,7 +162,7 @@ class ZabbixManager {
                 if delta != 0 {
                     while delta > 0 {
                         res2.removeFirst()
-                        --delta
+                        delta -= 1
                     }
                 }
                 let step = res2.count/hours

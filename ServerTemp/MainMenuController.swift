@@ -10,7 +10,7 @@ import UIKit
 
 class MainMenuController: UITableViewController {
     
-    private let menuItems = ["Серверная 300" , "Тест VPN","Настройки"]
+    private let menuItems = ["Серверная 310" , "Тест VPN","Настройки"]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,7 @@ class MainMenuController: UITableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         switch menuItems[indexPath.row] {
-            case "Серверная 300":
+            case "Серверная 310":
                 self.performSegueWithIdentifier("push300Serv", sender: self)
                 break
             case "Тест VPN":

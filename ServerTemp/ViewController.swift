@@ -62,7 +62,7 @@ class ViewController: UIViewController {
         rightScaleView.setValue(0, animated: false)
         rightScaleView.animationDuration = 1.5
         leftScaleView.animationDuration = 1.5
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "orientationChanged:", name: UIDeviceOrientationDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.orientationChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: nil)
         progressHUD = MBProgressHUD(view: view)
     }
     
@@ -125,6 +125,10 @@ class ViewController: UIViewController {
     }
     
     private func updateLabelsWithData(report: [ReportValue]) {
+        guard report.count > 0 else {
+            print("HISTORY REPORT IS EMPTY!!!")
+            return
+        }
         var temps: [Double] = []
         var aver: Double = 0
         for item in report {
