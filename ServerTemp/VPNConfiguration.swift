@@ -20,9 +20,11 @@ class VPNConfiguration {
         }
     }
     
-    //MARK: - Instance varuables
+    //MARK: - Private instance varuables
     private let manager = NEVPNManager.sharedManager()
     private var needToSave = false
+    
+    //MARK: - Internal instance varuables
     internal var managerEnabled: Bool {
         get {
             return manager.enabled
@@ -32,6 +34,7 @@ class VPNConfiguration {
             needToSave = true
         }
     }
+    
     internal var connectionStatus: NEVPNStatus {
         get {
             return manager.connection.status
@@ -47,6 +50,7 @@ class VPNConfiguration {
             needToSave = true
         }
     }
+    
     internal var groupName: String? {
         get {
             let ipsecP = manager.protocolConfiguration as? NEVPNProtocolIPSec
@@ -58,6 +62,7 @@ class VPNConfiguration {
             needToSave = true
         }
     }
+    
     internal var username: String? {
         get {
             return manager.protocolConfiguration?.username
@@ -67,6 +72,7 @@ class VPNConfiguration {
             needToSave = true
         }
     }
+    
     internal var password: String? {
         get {
             return loadKeyForAccount("VPNPassword")
@@ -76,6 +82,7 @@ class VPNConfiguration {
             needToSave = true
         }
     }
+    
     internal var sharedKey: String? {
         get {
             return loadKeyForAccount("VPNSharedKey")
@@ -232,22 +239,15 @@ class VPNConfiguration {
     }
     
     private func getPersistentRefForSharedKey() -> (NSData?, status: OSStatus?) {
-        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecReturnPersistentRef: kCFBooleanTrue]
-        var result: AnyObject?
-        let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
-            SecItemCopyMatching(query as CFDictionaryRef, UnsafeMutablePointer(cfPointer))
-        }
-        if status != errSecSuccess {
-            return (nil, status)
-        }
-        if let resultData = result as? NSData {
-            return (resultData, nil)
-        }
-        return (nil, nil)
+        return self.getPersistentRefForKey("VPNSharedKey")
     }
     
     private func getPersistentRefForPassword() -> (NSData?, status: OSStatus?){
-        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword", kSecReturnPersistentRef: kCFBooleanTrue]
+        return self.getPersistentRefForKey("VPNPassword")
+    }
+    
+    private func getPersistentRefForKey(key: String) -> (NSData?, status: OSStatus?) {
+        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: key, kSecReturnPersistentRef: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
             SecItemCopyMatching(query as CFDictionaryRef, UnsafeMutablePointer(cfPointer))
@@ -277,61 +277,60 @@ class VPNConfiguration {
         return nil
     }
     
-    private func addSharedKey(sharedKey: String?) {
-        let data = sharedKey!.dataUsingEncoding(NSUTF8StringEncoding)
-        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey", kSecValueData: data!]
-        let status = SecItemAdd(query as CFDictionaryRef, nil)
-        if (status != errSecSuccess) {
-            print("ERROR WHILE ADDING NEW SHARED KEY : \(status)")
-        }
-    }
+//    private func addSharedKey(sharedKey: String?) {
+//        addGenericPassword(sharedKey, forKey: "VPNSharedKey")
+//    }
+//    
+//    private func addPassword(pwd: String?) {
+//        addGenericPassword(pwd, forKey: "VPNPassword")
+//    }
     
-    private func addPassword(password: String?) {
-        let data = password!.dataUsingEncoding(NSUTF8StringEncoding)
-        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword", kSecValueData: data!]
+    private func addGenericPassword(value: String?, forKey key: String!) {
+        let data = value?.dataUsingEncoding(NSUTF8StringEncoding)
+        let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: key, kSecValueData: data!]
         let status = SecItemAdd(query as CFDictionaryRef, nil)
         if (status != errSecSuccess) {
-            print("ERROR WHILE ADDING NEW VPN PASSWORD : \(status)")
+            switch key {
+            case "VPNPassword":
+                print("ERROR WHILE ADDING NEW VPN PASSWORD : \(status)")
+                break
+            case "VPNSharedKey":
+                print("ERROR WHILE ADDING NEW SHARED KEY : \(status)")
+                break
+            default:
+                break
+            }
         }
+        
     }
     
     private func updateSharedKey(value: String?) {
         if value != sharedKey {
-            guard value != nil else {
-                print("ERROR WHILE UPDATING SHARED KEY. VALUE MUST NOT BE NIL.")
-                return
-            }
-            let data = value!.dataUsingEncoding(NSUTF8StringEncoding)
-            let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNSharedKey"]
-            let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
-            let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
-            if (status == errSecItemNotFound) {
-                print("NO SHARED KEY FOUND. CREATING NEW ONE.")
-                addSharedKey(value)
-            }
-            else if (status != errSecSuccess) {
-                print("ERROR WHILE UPDATING SHARED KEY : \(status)")
-            }
+            updateGenericPassword(value, forKey: "VPNSharedKey")
         }
     }
     
     private func updatePassword(value: String?) {
         if value != password {
-            guard value != nil else {
-                print("ERROR WHILE UPDATING VPN PASSWORD. VALUE MUST NOT BE NIL.")
-                return
-            }
-            let data = value!.dataUsingEncoding(NSUTF8StringEncoding)
-            let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "VPNPassword"]
-            let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
-            let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
-            if status == errSecItemNotFound {
-                print("NO VPN PASSWORD FOUND. CREATING NEW ONE.")
-                addPassword(value)
-            }
-            else if (status != errSecSuccess){
-                print("ERROR WHILE UPDATING VPN PASSWORD : \(status)")
-            }
+            updateGenericPassword(value, forKey: "VPNPassword")
+        }
+    }
+    
+    private func updateGenericPassword(value: String?, forKey key: String!) {
+        guard value != nil else {
+            print("ERROR WHILE UPDATING \(key). VALUE MUST NOT BE NIL.")
+            return
+        }
+        let data = value!.dataUsingEncoding(NSUTF8StringEncoding)
+        let searchQuery: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: key]
+        let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
+        let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
+        if status == errSecItemNotFound {
+            print("NO \(key) FOUND. CREATING NEW ONE.")
+            addGenericPassword(value, forKey: key)
+        }
+        else if (status != errSecSuccess){
+            print("ERROR WHILE UPDATING \(key): \(status)")
         }
     }
     
