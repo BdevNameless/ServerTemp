@@ -148,6 +148,7 @@
 				11F0D09E1C116FEC004D5F55 /* Views */,
 				11344D001C0D232A0049F287 /* Controllers */,
 				11F0D0A21C151C7A004D5F55 /* Model */,
+				11A211841CEDA5EE00A8436F /* Common */,
 				11344CFF1C0D230C0049F287 /* UI */,
 				11344CDA1C0D20E20049F287 /* Info.plist */,
 			);
@@ -205,6 +206,15 @@
 			name = Cells;
 			sourceTree = "<group>";
 		};
+		11A211841CEDA5EE00A8436F /* Common */ = {
+			isa = PBXGroup;
+			children = (
+				11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */,
+				1167314D1C17A2F900E4919E /* BDNetManager.swift */,
+			);
+			name = Common;
+			sourceTree = "<group>";
+		};
 		11B8F7E81C28E326000CE221 /* CG Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,8 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				11F0D0A31C151C87004D5F55 /* Configurators */,
-				11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */,
-				1167314D1C17A2F900E4919E /* BDNetManager.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";

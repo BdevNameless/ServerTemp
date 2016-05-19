@@ -165,7 +165,7 @@ import UIKit
     
     lazy private var hoursDateFormatter: NSDateFormatter = {
         let formatter = NSDateFormatter()
-        formatter.timeZone = NSTimeZone(forSecondsFromGMT: 0)
+        formatter.timeZone = NSTimeZone.systemTimeZone()
         formatter.dateFormat = "HH"
         return formatter
     }()

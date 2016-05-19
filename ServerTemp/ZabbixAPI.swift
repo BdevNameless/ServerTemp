@@ -36,11 +36,11 @@ class ZabbixManager {
     
     //MARK: - Private Attributes
     private let netManager = BDNetManager.sharedManager
-    private let zbxConfig = ZabbixConfiguration()
+//    private let zbxConfig = ZabbixConfiguration()
     private var token: String? = nil
     private let zbxErrorDomain = "ZabbixErrorDomain"
     lazy private var restURL: String? = {
-        if let address = ZabbixConfiguration().serverAddress {
+        if let address = ZabbixConfiguration.serverAddress {
             return "https://\(address)/zabbix/api_jsonrpc.php"
         }
         return nil
@@ -55,10 +55,10 @@ class ZabbixManager {
     }
     
     internal func login(handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        if zbxConfig.isValid {
+        if ZabbixConfiguration.isValid {
             let params = [
-                    "user": zbxConfig.username!,
-                    "password": zbxConfig.password!
+                    "user": ZabbixConfiguration.username!,
+                    "password": ZabbixConfiguration.password!
             ]
             performRequestForMethod(.Login, withParams: params, handler: handler)
         }

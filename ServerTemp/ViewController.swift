@@ -102,9 +102,19 @@ class ViewController: UIViewController {
                         self.showAlertForError(fetchError!)
                     }
                 }
-                if result != nil {
-                    historyResult = result!
-                }
+                historyResult = [ReportValue(val: 24.5,clock: NSDate().dateByAddingTimeInterval(-3600*9)),
+                ReportValue(val: 24.0,clock: NSDate().dateByAddingTimeInterval(-3600*8)),
+                ReportValue(val: 25.0,clock: NSDate().dateByAddingTimeInterval(-3600*7)),
+                ReportValue(val: 23.5,clock: NSDate().dateByAddingTimeInterval(-3600*6)),
+                ReportValue(val: 23.5,clock: NSDate().dateByAddingTimeInterval(-3600*5)),
+                ReportValue(val: 23.0,clock: NSDate().dateByAddingTimeInterval(-3600*4)),
+                ReportValue(val: 24.0,clock: NSDate().dateByAddingTimeInterval(-3600*3)),
+                ReportValue(val: 24.5,clock: NSDate().dateByAddingTimeInterval(-3600*2)),
+                ReportValue(val: 25.0,clock: NSDate().dateByAddingTimeInterval(-3600)),
+                ReportValue(val: 24.5,clock: NSDate())]
+//                if result != nil {
+//                    historyResult = result!
+//                }
                 dispatch_group_leave(fetchGroup)
             }
             dispatch_group_wait(fetchGroup, DISPATCH_TIME_FOREVER)

@@ -10,10 +10,10 @@ import UIKit
 
 class SettingsViewController: UITableViewController, InputCellDelegate {
     
-    //MARK: - Instance Variables
+    //MARK: - Private Instance Variables
     private let ZabbixSettings = ["IP-адрес сервера","Пользователь", "Пароль"]
     private let vpnConfig = VPNConfiguration(true)
-    private let zabbixConfig = ZabbixConfiguration()
+//    private let zabbixConfig = ZabbixConfiguration()
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -37,13 +37,13 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     private func setValueForZabbixField(fieldName: String, cell: InputCell) {
         switch fieldName {
             case "IP-адрес сервера":
-                cell.textField.text = zabbixConfig.serverAddress
+                cell.textField.text = ZabbixConfiguration.serverAddress
                 break
             case "Пользователь":
-                cell.textField.text = zabbixConfig.username
+                cell.textField.text = ZabbixConfiguration.username
                 break
             case "Пароль":
-                cell.textField.text = zabbixConfig.password
+                cell.textField.text = ZabbixConfiguration.password
                 break
             default:
                 break
@@ -55,13 +55,13 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     func checkChanges(sender: InputCell) {
         switch sender.label.text! {
             case "IP-адрес сервера":
-                zabbixConfig.serverAddress = sender.textField.text
+                ZabbixConfiguration.serverAddress = sender.textField.text
                 break
             case "Пользователь":
-                zabbixConfig.username = sender.textField.text
+                ZabbixConfiguration.username = sender.textField.text
                 break
             case "Пароль":
-                zabbixConfig.password = sender.textField.text
+                ZabbixConfiguration.password = sender.textField.text
                 break
             default:
                 break

@@ -14,7 +14,7 @@ class ZabbixConfiguration {
 
     
     //MARK: - Instance varuables
-    internal var username: String? {
+    static internal var username: String? {
         get {
             return NSUserDefaults.standardUserDefaults().stringForKey("ZabbixUsername")
         }
@@ -24,15 +24,15 @@ class ZabbixConfiguration {
             userDefaults.synchronize()
         }
     }
-    internal var password: String? {
+    static internal var password: String? {
         get {
-            return loadPassword()
+            return ZabbixConfiguration.loadPassword()
         }
         set {
-            updatePassword(newValue)
+            ZabbixConfiguration.updatePassword(newValue)
         }
     }
-    internal var serverAddress: String? {
+    static internal var serverAddress: String? {
         get {
             return NSUserDefaults.standardUserDefaults().stringForKey("ZabbixServerAddress")
         }
@@ -42,13 +42,13 @@ class ZabbixConfiguration {
             userDefaults.synchronize()
         }
     }
-    internal var isValid: Bool {
-        return ((serverAddress != nil)&&(password != nil)&&(username != nil))
+    static internal var isValid: Bool {
+        return ((ZabbixConfiguration.serverAddress != nil)&&(ZabbixConfiguration.password != nil)&&(ZabbixConfiguration.username != nil))
     }
     
     //MARK: - Private Methods
     
-    private func loadPassword() -> String? {
+    static private func loadPassword() -> String? {
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "ZabbixPassword", kSecReturnData: kCFBooleanTrue]
         var result: AnyObject?
         let status = withUnsafeMutablePointer(&result) { cfPointer -> OSStatus in
@@ -63,14 +63,14 @@ class ZabbixConfiguration {
         return nil
     }
     
-    private func addPassword(value: String?) {
+    static private func addPassword(value: String?) {
         let data = value!.dataUsingEncoding(NSUTF8StringEncoding)
         let query: [NSObject: AnyObject] = [kSecClass: kSecClassGenericPassword, kSecAttrAccount: "ZabbixPassword", kSecValueData: data!]
         SecItemAdd(query as CFDictionaryRef, nil)
     }
     
-    private func updatePassword(value: String?) {
-        if value != password {
+    static private func updatePassword(value: String?) {
+        if value != ZabbixConfiguration.password {
             guard value != nil else {
                 return
             }
@@ -79,7 +79,7 @@ class ZabbixConfiguration {
             let updateQuery: [NSObject: AnyObject] = [kSecValueData: data!]
             let status = SecItemUpdate(searchQuery as CFDictionaryRef, updateQuery as CFDictionaryRef)
             if status == errSecItemNotFound {
-                addPassword(value)
+                ZabbixConfiguration.addPassword(value)
             }
         }
     }
