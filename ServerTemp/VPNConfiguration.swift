@@ -10,6 +10,11 @@ import Foundation
 import Security
 import NetworkExtension
 
+enum VPNError: ErrorType {
+    case ErrorWhileStartingVPNTunnel(error: NEVPNError)
+    case InvalidVPNConfoguration
+}
+
 class VPNConfiguration {
     
     
@@ -106,21 +111,41 @@ class VPNConfiguration {
             if pwdRef.status == nil {
                 p.passwordReference = pwdRef.0
             }
-            manager.saveToPreferencesWithCompletionHandler() { [unowned self] (saveError: NSError?) in
-                if saveError == nil {
-                    print("VPN PREFERENCES SECSESSFULY SAVED")
-                    self.needToSave = false
-                }
-                else {
-                    print("ERROR WHILE SAVING VPN PREFERENCES : \(saveError)")
-                }
-                let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
-                dispatch_after(delayTime, dispatch_get_main_queue()) {
+            let saveQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+            let saveGroup = dispatch_group_create()
+            dispatch_async(saveQueue, { [unowned self] in
+                dispatch_group_enter(saveGroup)
+                self.manager.saveToPreferencesWithCompletionHandler() { [unowned self] (saveError: NSError?) in
+                    if saveError == nil {
+                        print("VPN PREFERENCES SECSESSFULY SAVED")
+                        self.needToSave = false
+                    }
+                    else {
+                        print("ERROR WHILE SAVING VPN PREFERENCES : \(saveError)")
+                    }
                     if handler != nil {
                         handler!(error: saveError)
                     }
+                    dispatch_group_leave(saveGroup)
                 }
-            }
+            })
+            dispatch_group_wait(saveGroup, DISPATCH_TIME_FOREVER)
+            return
+//            manager.saveToPreferencesWithCompletionHandler() { [unowned self] (saveError: NSError?) in
+//                if saveError == nil {
+//                    print("VPN PREFERENCES SECSESSFULY SAVED")
+//                    self.needToSave = false
+//                }
+//                else {
+//                    print("ERROR WHILE SAVING VPN PREFERENCES : \(saveError)")
+//                }
+//                let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
+//                dispatch_after(delayTime, dispatch_get_main_queue()) {
+//                    if handler != nil {
+//                        handler!(error: saveError)
+//                    }
+//                }
+//            }
         }
         else {
             if handler != nil {
@@ -172,39 +197,40 @@ class VPNConfiguration {
         }
     }
     
-    internal func testConnection() {
-        saveConfiguration() { [unowned self] (error: NSError?) in
-//            print(self.connectionStatus.rawValue)
-            if error == nil {
-                let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
-                dispatch_after(delayTime, dispatch_get_main_queue()) {
-                    try! self.startVPN()
-                }
-            }
+    internal func testConnection() throws {
+        if needToSave {
+            saveConfiguration()
         }
+        NSTimer.init(timeInterval: 0.8 * Double(NSEC_PER_SEC), target: self, selector: #selector(VPNConfiguration.startVPN), userInfo: nil, repeats: false).fire()
+//        saveConfiguration() { [unowned self] (error: NSError?) in
+//            if error == nil {
+//                let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(0.8 * Double(NSEC_PER_SEC)))
+//                dispatch_after(delayTime, dispatch_get_main_queue()) {
+//                    try! self.startVPN()
+//                }
+//            }
+//        }
     }
     
-    internal func startVPN() throws {
-        if connectionStatus != .Invalid {
-            print("TRY STARTING VPN TUNNEL")
-            let statuses: Set<NEVPNStatus> = [.Disconnected, .Disconnecting]
-            if statuses.contains(manager.connection.status) {
-                do {
-                    try manager.connection.startVPNTunnel()
-                    print("STARTING VPN TUNNEL")
-                }
-                catch let error {
-                    throw error
-                }
+    @objc internal func startVPN() throws {
+        guard connectionStatus != .Invalid else {
+            throw VPNError.InvalidVPNConfoguration
+        }
+        
+        print("TRY STARTING VPN TUNNEL")
+        let statuses: Set<NEVPNStatus> = [.Disconnected, .Disconnecting]
+        if statuses.contains(manager.connection.status) {
+            do {
+                try manager.connection.startVPNTunnel()
+                print("STARTING VPN TUNNEL")
             }
-            else {
-                print("VPN tunnel is already up.")
+            catch let error as NEVPNError {
+                throw VPNError.ErrorWhileStartingVPNTunnel(error: error)
             }
         }
         else {
-            print("Connection is Invalid.")
+            print("VPN tunnel is already up.")
         }
-        
     }
     
     internal func stopVPN() {

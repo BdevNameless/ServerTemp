@@ -18,7 +18,26 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     private var testCell: ButtonCell? = nil
     private var delCell: ButtonCell? = nil
     private var vpnSwitch: UISwitch? = nil
-    private var isChecking: Bool = false
+    private var vpnStatusSwitch: UISwitch? = nil
+    private var progressHUD: MBProgressHUD? = nil
+    private var isChangingVPNStatus: Bool = false {
+        didSet {
+            if isChangingVPNStatus {
+                self.view.userInteractionEnabled = false
+                navigationController?.navigationBar.userInteractionEnabled = false
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+                
+            }
+            else {
+                self.view.userInteractionEnabled = true
+                navigationController?.navigationBar.userInteractionEnabled = true
+                UIApplication.sharedApplication().networkActivityIndicatorVisible = false
+                if progressHUD != nil {
+                    progressHUD!.hide(true)
+                }
+            }
+        }
+    }
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -39,13 +58,34 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     //MARK: - Internal Handlers
     internal func changeSwitchValue() {
         vpnSwitch!.setOn(!vpnSwitch!.on, animated: true)
-        switchChanged()
+        switchChanged(vpnSwitch!)
     }
     
-    internal func switchChanged() {
-        print("SWITCH CHANGED TRIGGERED")
-        vpnConfig.managerEnabled = vpnSwitch!.on
+    internal func switchChanged(sender: UISwitch) {
+        switch sender {
+        case vpnSwitch!:
+            vpnConfig.managerEnabled = sender.on
+            break
+        case vpnStatusSwitch!:
+            isChangingVPNStatus = true
+            if sender.on {
+//                progressHUD = MBProgressHUD()
+//                progressHUD!.labelText = "Поднимаю VPN..."
+//                progressHUD!.removeFromSuperViewOnHide = true
+//                view.addSubview(progressHUD!)
+//                progressHUD!.show(true)
+                tryStartVPNTunnel()
+            }
+            else {
+                vpnConfig.stopVPN()
+            }
+            break
+        default:
+            break
+        }
     }
+    
+    
     
     func checkChanges(sender: InputCell) {
         switch sender.label.text! {
@@ -70,59 +110,65 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
     }
     
     internal func statusChanged(aNotif: NSNotification){
-        guard isChecking else {
-            return
-        }
-        switch vpnConfig.connectionStatus.rawValue {
-        case 3:
-            // USPEX
-            testCell?.label.text = "Подключено"
-            let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение успешно установлено.", preferredStyle: .Alert)
-            alertVC.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-            self.presentViewController(alertVC, animated: true) { [unowned self] in
-                self.vpnConfig.stopVPN()
-            }
+//        guard isChecking else {
+//            return
+//        }
+//        switch vpnConfig.connectionStatus.rawValue {
+//        case 3:
+//            // USPEX
+//            testCell?.label.text = "Подключено"
+//            let alertVC = UIAlertController(title: "Подключение VPN", message: "Подключение успешно установлено.", preferredStyle: .Alert)
+//            alertVC.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+//            self.presentViewController(alertVC, animated: true) { [unowned self] in
+//                self.vpnConfig.stopVPN()
+//            }
+//            break
+//        case 2:
+//            view.userInteractionEnabled = false
+//            testCell?.spanner.startAnimating()
+//            testCell?.spanner.hidden = false
+//            testCell?.label.text = "Подключаюсь"
+//            break
+//        case 1:
+//            isChecking = false
+//            view.userInteractionEnabled = true
+//            testCell?.spanner.stopAnimating()
+//            testCell?.label.text = "Проверить соединение"
+//            break
+//        default:
+//            break
+//        }
+        
+        switch vpnConfig.connectionStatus {
+        case .Connected:
+            vpnStatusSwitch?.setOn(true, animated: true)
+            isChangingVPNStatus = false
             break
-        case 2:
-            view.userInteractionEnabled = false
-            testCell?.spanner.startAnimating()
-            testCell?.spanner.hidden = false
-            testCell?.label.text = "Подключаюсь"
-            break
-        case 1:
-            isChecking = false
-            view.userInteractionEnabled = true
-            testCell?.spanner.stopAnimating()
-            testCell?.label.text = "Проверить соединение"
+        case .Disconnected:
+            vpnStatusSwitch?.setOn(false, animated: true)
+            isChangingVPNStatus = false
             break
         default:
             break
         }
+        
     }
     
     //MARK: - Private Methods
-    private func canTest() -> Bool {
-        return (vpnConfig.managerEnabled)&&(vpnConfig.connectionStatus.rawValue != 0)
-    }
     
-    private func testButtonTapped() {
-        isChecking = true
-        vpnConfig.saveConfiguration() { [unowned self] (saveError: NSError?) in
-            if saveError == nil {
-                if (self.vpnConfig.connectionStatus.rawValue != 0) {
-                    try! self.vpnConfig.startVPN()
-                }
-                else {
-                    self.isChecking = false
-                    let alert = UIAlertController(title: "Подключение VPN", message: "Некорректные данные", preferredStyle: .Alert)
-                    alert.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
-                    self.presentViewController(alert, animated: true, completion: nil)
-                }
+    private func tryStartVPNTunnel() {
+        vpnConfig.saveConfiguration() { [unowned self] (error) in
+            do {
+                try self.vpnConfig.startVPN()
             }
-            else {
-                self.isChecking = false
-                self.showAlertForError(saveError!)
-                self.tableView.reloadData()
+            catch VPNError.InvalidVPNConfoguration {
+                
+            }
+            catch VPNError.ErrorWhileStartingVPNTunnel(let error) {
+                print(error)
+            }
+            catch {
+                print("WTF IS THAT")
             }
         }
     }
@@ -210,12 +256,27 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
             configureInputCell(aCell, forIndexPath: indexPath)
             return aCell
         }
-        else if ((indexPath.section == 1)&&(indexPath.row == 0)) {
+        else if indexPath.section == 1 {
             let aCell = tableView.dequeueReusableCellWithIdentifier("SwitchCell") as! SwitchCell
-            aCell.label.text = "Использовать VPN"
-            vpnSwitch = aCell.ui_switch
-            aCell.ui_switch.on = vpnConfig.managerEnabled
-            aCell.ui_switch.addTarget(self, action: #selector(VPNSettingsViewController.switchChanged), forControlEvents: .ValueChanged)
+            aCell.selectionStyle = .None
+            switch indexPath.row {
+            case 0:
+                aCell.label.text = "Использовать VPN"
+                vpnSwitch = aCell.ui_switch
+                aCell.ui_switch.on = vpnConfig.managerEnabled
+                aCell.ui_switch.addTarget(self, action: #selector(VPNSettingsViewController.switchChanged), forControlEvents: .ValueChanged)
+                break
+            case 1:
+                aCell.label.text = "Статус VPN-туннеля"
+                vpnStatusSwitch = aCell.ui_switch
+                aCell.ui_switch.on = vpnConfig.connectionStatus == .Connected
+                aCell.ui_switch.addTarget(self, action: #selector(VPNSettingsViewController.switchChanged), forControlEvents: .TouchUpInside)
+                break
+            default:
+                break
+            }
+            
+            
             return aCell
         }
         let aCell = tableView.dequeueReusableCellWithIdentifier("ButtonCell") as! ButtonCell
@@ -259,19 +320,19 @@ class VPNSettingsViewController: UITableViewController, InputCellDelegate {
             (aCell as! InputCell).textField.becomeFirstResponder()
             break
         case 1:
-            tableView.deselectRowAtIndexPath(indexPath, animated: true)
-            if vpnConfig.managerEnabled {
-                testButtonTapped()
-            }
-            else {
-                let alert = UIAlertController(title: "Подключение VPN", message: "Для тестирования подключения необходимо разрешить использование VPN. Разрешить?", preferredStyle: .Alert)
-                alert.addAction(UIAlertAction(title: "Да", style: .Default) { [unowned self] (action: UIAlertAction) in
-                    self.changeSwitchValue()
-                    self.testButtonTapped()
-                })
-                alert.addAction(UIAlertAction(title: "Нет", style: .Default, handler: nil))
-                presentViewController(alert, animated: true, completion: nil)
-            }
+//            tableView.deselectRowAtIndexPath(indexPath, animated: true)
+//            if vpnConfig.managerEnabled {
+//                testButtonTapped()
+//            }
+//            else {
+//                let alert = UIAlertController(title: "Подключение VPN", message: "Для тестирования подключения необходимо разрешить использование VPN. Разрешить?", preferredStyle: .Alert)
+//                alert.addAction(UIAlertAction(title: "Да", style: .Default) { [unowned self] (action: UIAlertAction) in
+//                    self.changeSwitchValue()
+//                    self.testButtonTapped()
+//                })
+//                alert.addAction(UIAlertAction(title: "Нет", style: .Default, handler: nil))
+//                presentViewController(alert, animated: true, completion: nil)
+//            }
             break
         case 2:
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
