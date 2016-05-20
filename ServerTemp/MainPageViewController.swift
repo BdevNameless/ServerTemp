@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MainPageViewController.swift
 //  CG
 //
 //  Created by BdevNameless on 10.12.15.
@@ -9,7 +9,9 @@
 import UIKit
 import MBProgressHUD
 
-class ViewController: UIViewController {
+class MainPageViewController: UIViewController {
+    
+    // MARK: - Outlets
     @IBOutlet weak var leftScaleView: AnimatedScale!
     @IBOutlet weak var leftTempLabel: TempLabel!
     @IBOutlet weak var rightScaleView: AnimatedScale!
@@ -19,8 +21,11 @@ class ViewController: UIViewController {
     @IBOutlet weak var midTempLabel: UILabel!
     @IBOutlet weak var graphView: GraphView!
     
+    
+    //MARK: - Private attributes
     private var progressHUD: MBProgressHUD? = nil
     private let zbxManager = ZabbixManager.sharedInstance
+    private let vpnConfig = VPNConfiguration()
     private var temp23663: ReportValue? = nil {
         didSet {
             if temp23663 != nil {
@@ -38,6 +43,7 @@ class ViewController: UIViewController {
         }
     }
 
+    //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureReveal()
@@ -49,6 +55,7 @@ class ViewController: UIViewController {
         updateData()
     }
     
+    //MARK: - Setup
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .LightContent
     }
@@ -62,14 +69,21 @@ class ViewController: UIViewController {
         rightScaleView.setValue(0, animated: false)
         rightScaleView.animationDuration = 1.5
         leftScaleView.animationDuration = 1.5
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(ViewController.orientationChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MainPageViewController.orientationChanged(_:)), name: UIDeviceOrientationDidChangeNotification, object: nil)
         progressHUD = MBProgressHUD(view: view)
     }
     
+    //MARK: - Handlers
     internal func orientationChanged(aNofif: NSNotification) {
         leftScaleView.setNeedsDisplayInRect(leftScaleView.bounds)
         rightScaleView.setNeedsDisplayInRect(rightScaleView.bounds)
         graphView.setNeedsDisplayInRect(graphView.bounds)
+    }
+    
+    //MARK: - Private methods
+    
+    private func checkVPNUsage() {
+
     }
     
     private func updateData() {
