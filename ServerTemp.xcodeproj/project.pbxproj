@@ -22,6 +22,7 @@
 		1167314E1C17A2F900E4919E /* BDNetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1167314D1C17A2F900E4919E /* BDNetManager.swift */; };
 		11A211861CEEDADA00A8436F /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A211851CEEDAD900A8436F /* StartupViewController.swift */; };
 		11A592BE1D13CBDA007D7922 /* FetchSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A592BD1D13CBDA007D7922 /* FetchSettingsViewController.swift */; };
+		11A592C01D13E6D5007D7922 /* SensorCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A592BF1D13E6D5007D7922 /* SensorCell.swift */; };
 		11B8F7E51C28E30C000CE221 /* AnimatedScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */; };
 		11B8F7E71C28E31F000CE221 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E61C28E31F000CE221 /* GraphView.swift */; };
 		11B8F7EA1C28E367000CE221 /* MainPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E91C28E367000CE221 /* MainPageViewController.swift */; };
@@ -78,6 +79,7 @@
 		1167314D1C17A2F900E4919E /* BDNetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BDNetManager.swift; sourceTree = "<group>"; };
 		11A211851CEEDAD900A8436F /* StartupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
 		11A592BD1D13CBDA007D7922 /* FetchSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchSettingsViewController.swift; sourceTree = "<group>"; };
+		11A592BF1D13E6D5007D7922 /* SensorCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SensorCell.swift; sourceTree = "<group>"; };
 		11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedScale.swift; sourceTree = "<group>"; };
 		11B8F7E61C28E31F000CE221 /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		11B8F7E91C28E367000CE221 /* MainPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPageViewController.swift; sourceTree = "<group>"; };
@@ -207,6 +209,7 @@
 				11C23E541C0FFD30000D2C81 /* SwitchCell.swift */,
 				11C23E561C0FFD3E000D2C81 /* ButtonCell.swift */,
 				11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */,
+				11A592BF1D13E6D5007D7922 /* SensorCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -487,6 +490,7 @@
 				11B8F7EC1C28E44B000CE221 /* TempLabel.swift in Sources */,
 				11C23E531C0FFABA000D2C81 /* VPNSettingsViewController.swift in Sources */,
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
+				11A592C01D13E6D5007D7922 /* SensorCell.swift in Sources */,
 				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
 				11B8F7E71C28E31F000CE221 /* GraphView.swift in Sources */,
 				11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */,
