@@ -11,7 +11,7 @@ import UIKit
 class SettingsViewController: UITableViewController, InputCellDelegate {
     
     //MARK: - Private Instance Variables
-    private let ZabbixSettings = ["IP-адрес сервера","Пользователь", "Пароль"]
+    private let ZabbixSettings = ["IP-адрес сервера","Пользователь", "Пароль", "Датчики", "Дополнительные настройки"]
     private let vpnConfig = VPNConfiguration(true)
 //    private let zabbixConfig = ZabbixConfiguration()
     
@@ -82,11 +82,26 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let aCell = tableView.dequeueReusableCellWithIdentifier("InputCell") as! InputCell
-            configureCell(aCell, forIndexPath: indexPath)
-            return aCell
+            var aCell: UITableViewCell? = nil
+            switch indexPath.row {
+            case 0...2:
+                aCell = tableView.dequeueReusableCellWithIdentifier("InputCell") as! InputCell
+                configureCell(aCell as! InputCell, forIndexPath: indexPath)
+                break
+            case 3:
+                aCell = tableView.dequeueReusableCellWithIdentifier("disclosureCell") as! DisclosureCell
+                (aCell as! DisclosureCell).label.text = "Датчики"
+                break
+            case 4:
+                aCell = tableView.dequeueReusableCellWithIdentifier("disclosureCell") as! DisclosureCell
+                (aCell as! DisclosureCell).label.text = "Дополнительные настройки"
+                break
+            default:
+                break
+            }
+            return aCell!
         }
-        let aCell = tableView.dequeueReusableCellWithIdentifier("toVPNCell") as! DisclosureCell
+        let aCell = tableView.dequeueReusableCellWithIdentifier("disclosureCell") as! DisclosureCell
         aCell.label.text = "Настроить VPN"
         return aCell
     }
@@ -115,11 +130,26 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         if indexPath.section == 0 {
-            let aCell = tableView.cellForRowAtIndexPath(indexPath)
-            (aCell as! InputCell).textField.becomeFirstResponder()
+            switch indexPath.row {
+            case 0...2:
+                let aCell = tableView.cellForRowAtIndexPath(indexPath)
+                (aCell as! InputCell).textField.becomeFirstResponder()
+                break
+            case 3:
+                tableView.deselectRowAtIndexPath(indexPath, animated: true)
+//                self.performSegueWithIdentifier("toVPNSegue", sender: self)
+                break
+            case 4:
+                tableView.deselectRowAtIndexPath(indexPath, animated: true)
+//                self.performSegueWithIdentifier("toVPNSegue", sender: self)
+                break
+            default:
+                break
+            }
         }
-        else {
+        else if indexPath.section == 1 {
             tableView.deselectRowAtIndexPath(indexPath, animated: true)
+            self.performSegueWithIdentifier("toVPNSegue", sender: self)
         }
     }
 }

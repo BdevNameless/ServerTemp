@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -87,6 +88,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let config = VPNConfiguration()
         config.stopVPN()
     }
+    
+    //MARK: - CoreData Stack
+    
+    
 
 }
 

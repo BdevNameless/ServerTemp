@@ -118,6 +118,9 @@ class MainPageViewController: UIViewController {
             self.zbxManager.getItemReportsByIDs(["23663", "23664"], withHostIDs: nil, handler: { [unowned self] (fetchError: NSError?, result: [String: ReportValue]?) in
                 if fetchError != nil {
                     dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+                        if self.progressHUD != nil {
+                            self.progressHUD!.hide(true)
+                        }
                         self.showAlertForError(fetchError!)
                     }
                 }

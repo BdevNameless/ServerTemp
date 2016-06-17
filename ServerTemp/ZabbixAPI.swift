@@ -48,6 +48,7 @@ class ZabbixHost: CustomStringConvertible {
 }
 
 class ZabbixManager {
+    
     //MARK: - Initialization
     static var sharedInstance = ZabbixManager()
     
@@ -57,7 +58,6 @@ class ZabbixManager {
     
     //MARK: - Private Attributes
     private let netManager = BDNetManager.sharedManager
-//    private let zbxConfig = ZabbixConfiguration()
     private var token: String? = nil
     private let zbxErrorDomain = "ZabbixErrorDomain"
     lazy private var restURL: String? = {

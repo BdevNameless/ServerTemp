@@ -105,7 +105,7 @@
                                     <outlet property="textField" destination="qHF-Jp-4vo" id="YJy-r8-Xpe"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="toVPNCell" id="9b8-uw-a9n" customClass="DisclosureCell" customModule="ServerTemp" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="disclosureCell" id="9b8-uw-a9n" customClass="DisclosureCell" customModule="ServerTemp" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="157.5" width="600" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9b8-uw-a9n" id="AB9-PO-cj5">
@@ -115,7 +115,7 @@
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7eT-Ne-8jH">
                                             <rect key="frame" x="8" y="11" width="42" height="20.5"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" red="0.50196081400000003" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.0" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -127,7 +127,6 @@
                                 <color key="backgroundColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <outlet property="label" destination="7eT-Ne-8jH" id="rRd-w1-7lq"/>
-                                    <segue destination="srC-xV-87U" kind="show" id="Cjl-94-L4A"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -138,6 +137,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Настройки" id="rvO-Z8-g3b"/>
+                    <connections>
+                        <segue destination="srC-xV-87U" kind="show" identifier="toVPNSegue" id="FGg-QS-Ytp"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9tP-wd-jBA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -237,17 +239,26 @@
                                             <color key="onTintColor" red="0.50196081400000003" green="1" blue="0.0" alpha="0.76128771551724139" colorSpace="calibratedRGB"/>
                                             <color key="thumbTintColor" red="0.1764705882352941" green="0.1764705882352941" blue="0.1764705882352941" alpha="1" colorSpace="calibratedRGB"/>
                                         </switch>
+                                        <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FCc-ql-Sft">
+                                            <rect key="frame" x="493" y="11" width="42" height="21"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
                                     </subviews>
                                     <constraints>
                                         <constraint firstAttribute="leadingMargin" secondItem="NVH-Qq-bLk" secondAttribute="leading" id="Dok-pF-4JC"/>
                                         <constraint firstItem="NVH-Qq-bLk" firstAttribute="centerY" secondItem="Iya-ds-iML" secondAttribute="centerY" id="SKg-EG-zrx"/>
                                         <constraint firstItem="Ncx-ge-AYI" firstAttribute="centerY" secondItem="NVH-Qq-bLk" secondAttribute="centerY" id="X6t-lY-itj"/>
                                         <constraint firstAttribute="trailingMargin" secondItem="Ncx-ge-AYI" secondAttribute="trailing" id="ZT8-Ou-zcF"/>
+                                        <constraint firstItem="FCc-ql-Sft" firstAttribute="centerY" secondItem="Ncx-ge-AYI" secondAttribute="centerY" id="cxk-hX-zqQ"/>
+                                        <constraint firstItem="Ncx-ge-AYI" firstAttribute="leading" secondItem="FCc-ql-Sft" secondAttribute="trailing" constant="8" id="zlB-8a-dtb"/>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <color key="backgroundColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                                 <connections>
                                     <outlet property="label" destination="NVH-Qq-bLk" id="OHk-IC-xKA"/>
+                                    <outlet property="statusLabel" destination="FCc-ql-Sft" id="sIS-Tu-cGQ"/>
                                     <outlet property="ui_switch" destination="Ncx-ge-AYI" id="blW-3D-h45"/>
                                 </connections>
                             </tableViewCell>
