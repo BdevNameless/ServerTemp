@@ -94,7 +94,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
                 break
             case 4:
                 aCell = tableView.dequeueReusableCellWithIdentifier("disclosureCell") as! DisclosureCell
-                (aCell as! DisclosureCell).label.text = "Дополнительные настройки"
+                (aCell as! DisclosureCell).label.text = "Дополнительно"
                 break
             default:
                 break
@@ -141,7 +141,7 @@ class SettingsViewController: UITableViewController, InputCellDelegate {
                 break
             case 4:
                 tableView.deselectRowAtIndexPath(indexPath, animated: true)
-//                self.performSegueWithIdentifier("toVPNSegue", sender: self)
+                self.performSegueWithIdentifier("toFetchSettingsSegue", sender: self)
                 break
             default:
                 break

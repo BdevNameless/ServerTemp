@@ -133,6 +133,7 @@ class MainPageViewController: UIViewController {
                         self.temp23664 = result!["23664"]
                     }
                 }
+                
 //                dispatch_group_leave(fetchGroup)
             })
 //            dispatch_group_enter(fetchGroup)

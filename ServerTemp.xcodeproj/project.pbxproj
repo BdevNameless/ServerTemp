@@ -21,6 +21,7 @@
 		113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113FD13A1C0E72C000A4551E /* TestConnectionViewController.swift */; };
 		1167314E1C17A2F900E4919E /* BDNetManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1167314D1C17A2F900E4919E /* BDNetManager.swift */; };
 		11A211861CEEDADA00A8436F /* StartupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A211851CEEDAD900A8436F /* StartupViewController.swift */; };
+		11A592BE1D13CBDA007D7922 /* FetchSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11A592BD1D13CBDA007D7922 /* FetchSettingsViewController.swift */; };
 		11B8F7E51C28E30C000CE221 /* AnimatedScale.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */; };
 		11B8F7E71C28E31F000CE221 /* GraphView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E61C28E31F000CE221 /* GraphView.swift */; };
 		11B8F7EA1C28E367000CE221 /* MainPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B8F7E91C28E367000CE221 /* MainPageViewController.swift */; };
@@ -76,6 +77,7 @@
 		113FD13D1C0E82E300A4551E /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
 		1167314D1C17A2F900E4919E /* BDNetManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BDNetManager.swift; sourceTree = "<group>"; };
 		11A211851CEEDAD900A8436F /* StartupViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StartupViewController.swift; sourceTree = "<group>"; };
+		11A592BD1D13CBDA007D7922 /* FetchSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchSettingsViewController.swift; sourceTree = "<group>"; };
 		11B8F7E41C28E30C000CE221 /* AnimatedScale.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedScale.swift; sourceTree = "<group>"; };
 		11B8F7E61C28E31F000CE221 /* GraphView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GraphView.swift; sourceTree = "<group>"; };
 		11B8F7E91C28E367000CE221 /* MainPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainPageViewController.swift; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 			children = (
 				11344D031C0D31630049F287 /* SettingsViewController.swift */,
 				11C23E521C0FFABA000D2C81 /* VPNSettingsViewController.swift */,
+				11A592BD1D13CBDA007D7922 /* FetchSettingsViewController.swift */,
 			);
 			name = Settings;
 			sourceTree = "<group>";
@@ -494,6 +497,7 @@
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
 				11C23E551C0FFD30000D2C81 /* SwitchCell.swift in Sources */,
 				11F0D0A11C151C66004D5F55 /* ZabbixAPI.swift in Sources */,
+				11A592BE1D13CBDA007D7922 /* FetchSettingsViewController.swift in Sources */,
 				11B8F7E51C28E30C000CE221 /* AnimatedScale.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
