@@ -19,9 +19,14 @@ class StartupViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
     }
+//    
+//    override func viewWillAppear(animated: Bool) {
+//        super.viewWillAppear(animated)
+//        checkVPNUsage()
+//    }
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         checkVPNUsage()
     }
     
@@ -59,16 +64,17 @@ class StartupViewController: UIViewController {
     }
     
     private func checkVPNUsage() {
-        vpnConfig.loadConfigugarion { [unowned self] (error) in
-            if error == nil {
-                if self.vpnConfig.managerEnabled && self.vpnConfig.connectionStatus != .Connected {
-                    self.startVPNTunnel()
-                }
-                else {
-                    self.moveForvard()
-                }
-            }
-        }
+//        vpnConfig.loadConfigugarion { [unowned self] (error) in
+//            if error == nil {
+//                if self.vpnConfig.managerEnabled && self.vpnConfig.connectionStatus != .Connected {
+//                    self.startVPNTunnel()
+//                }
+//                else {
+//                    self.moveForvard()
+//                }
+//            }
+//        }
+        moveForvard()
     }
     
     private func startVPNTunnel() {

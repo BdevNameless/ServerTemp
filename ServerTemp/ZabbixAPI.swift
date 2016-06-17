@@ -11,18 +11,39 @@ import Alamofire
 import SwiftyJSON
 
 
-class ReportValue {
+class ReportValue: CustomStringConvertible {
     
     var value: Double? = nil
     var date: NSDate? = nil
 
-    func description() -> String {
+    var description: String {
         return "Record(value: \(value), date: \(date))"
     }
     
     init(val: Double?, clock: NSDate?) {
         value = val
         date = clock
+    }
+}
+
+class ZabbixHost: CustomStringConvertible {
+    
+    var hostid: String
+    var hostname: String
+    var snmp_available: Bool
+    var available: Int
+    var status: Int
+    
+    var description: String {
+        return "Zabbix Host(hostid: \(hostid), hostname: \(hostname), snmp_available: \(snmp_available), available: \(available), status: \(status))"
+    }
+    
+    init(hostid: String, hostname: String, snmp: Bool, available: Int, status: Int) {
+        self.hostid = hostid
+        self.hostname = hostname
+        snmp_available = snmp
+        self.available = available
+        self.status = status
     }
 }
 
@@ -47,165 +68,70 @@ class ZabbixManager {
     }()
     
     //MARK: - Internal Methods
-    internal func cancelCurrentRequest() {
+    
+    func cancelCurrentRequest() {
         if let cur_req = netManager.currentRequest {
             cur_req.cancel()
             netManager.currentRequest = nil
         }
     }
     
-    internal func login(handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        if ZabbixConfiguration.isValid {
-            let params = [
-                    "user": ZabbixConfiguration.username!,
-                    "password": ZabbixConfiguration.password!
-            ]
-            performRequestForMethod(.Login, withParams: params, handler: handler)
+    func getItemReportsByIDs(ids: [String]?, withHostIDs hostids: [String]?, handler: ((error: NSError?, result: [String: ReportValue]?) -> Void)?) {
+        var params: [String: AnyObject] = ["output": "extend"]
+        if ids != nil {
+            params["itemids"] = ids
         }
-        else{
-            if handler != nil {
-                handler!(error: NSError(domain: zbxErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid Zabbix configuration. Check preferences."]), result: nil)
-            }
+        if hostids != nil {
+            params["hostids"] = hostids
         }
-    }
-    
-    internal func getItemsByID(id: [String], handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        guard token != nil else {
-            login() { [unowned self] (loginError: NSError?, result: JSON?) in
-                guard loginError == nil else {
-                    if handler != nil {
-                        handler!(error: loginError!, result: nil)
-                    }
-                    return
-                }
-                self.getItemsByID(id, handler: handler)
-            }
-            return
-        }
-        let params: [String: AnyObject] = [
-            "output": "extend",
-            "itemids": id
-        ]
-        performRequestForMethod(.GetItem, withParams: params, handler: handler)
-    }
-    
-    internal func getFresh300Report(handler: ((error: NSError?, result: [String: ReportValue]?) -> Void)?) {
-        guard token != nil else {
-            login() { [unowned self] (loginError: NSError?, result: JSON?) in
-                guard loginError == nil else {
-                    if handler != nil {
-                        handler!(error: loginError!, result: nil)
-                    }
-                    return
-                }
-                self.getFresh300Report(handler)
-            }
-            return
-        }
-        _freshTempFor300Serv() { (fetchError: NSError?, res: JSON?) in
-            guard fetchError == nil else {
+        performRequestForAuthentificatedMethod(.GetItem, withParams: params) { (error, result) in
+            guard error == nil else {
                 if handler != nil {
-                    handler!(error: fetchError!, result: nil)
+                    handler!(error: error, result: nil)
                 }
                 return
             }
             var response: [String: ReportValue] = [:]
-            let asArray = res!.arrayValue
+            let asArray = result!.arrayValue
             for item in asArray {
                 let key = item["itemid"].stringValue
-                let report = ReportValue(val: item["value"].doubleValue, clock: NSDate(timeIntervalSince1970: item["clock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))))
+                let report = ReportValue(val: item["lastvalue"].doubleValue, clock: NSDate(timeIntervalSince1970: item["lastclock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))))
                 response[key] = report
             }
             if handler != nil {
                 handler!(error: nil, result: response)
             }
         }
-        
     }
     
-    internal func get300History(hours: Int, handler: ((error: NSError?, result: [ReportValue]?) -> Void)?) {
-        guard token != nil else {
-            login() { [unowned self] (loginError: NSError?, result: JSON?) in
-                guard loginError == nil else {
-                    if handler != nil {
-                        handler!(error: loginError!, result: nil)
-                    }
-                    return
-                }
-                self.get300History(hours, handler: handler)
-            }
-            return
+    func getHostsByIDs(hostids: [String]?, withFilter filter: [String: AnyObject]?, handler: ((error: NSError?, result: [ZabbixHost]?) -> Void)?) {
+        var params: [String: AnyObject] = ["output": "extend", "sortfield": "name", "sortorder": "ASC", "with_monitored_items": true]
+        if hostids != nil {
+            params["hostids"] = hostids
         }
-        let now = NSDate()
-        let fromDate = String(Int(now.dateByAddingTimeInterval(Double(-(hours*3600))).timeIntervalSince1970))
-        print(now, now.dateByAddingTimeInterval(Double(-(hours*3600))))
-        var res1: [JSON] = []
-        var res2: [JSON] = []
-        _getItemHistory("23663", fromTimestamp: fromDate) { [unowned self] (error1: NSError?, result1: JSON?) in
-            guard error1 == nil else {
+        if filter != nil {
+            params["filter"] = filter
+        }
+        performRequestForAuthentificatedMethod(.GetHost, withParams: params) { (error, result) in
+            guard error == nil else {
                 if handler != nil {
-                    handler!(error: error1, result: nil)
+                    handler!(error: error, result: nil)
                 }
                 return
             }
-            res1 = result1!.arrayValue
-            self._getItemHistory("23664", fromTimestamp: fromDate) { (error2: NSError?, result2: JSON?) in
-                guard error2 == nil else {
-                    if handler != nil {
-                        handler!(error: error2, result: nil)
-                    }
-                    return
+            if handler != nil {
+                var response: [ZabbixHost] = []
+                print(result!.arrayValue)
+                for host in result!.arrayValue {
+                    response.append(ZabbixHost(hostid: host["hostid"].stringValue, hostname: host["name"].stringValue, snmp: host["snmp_available"].boolValue, available: host["available"].intValue, status: host["status"].intValue))
                 }
-                res2 = result2!.arrayValue
-                var delta = res2.count - res1.count
-                print(delta)
-                if delta != 0 {
-                    while delta > 0 {
-                        res2.removeFirst()
-                        delta -= 1
-                    }
-                }
-                let step = res2.count/hours
-                var i = 0
-                var response: [ReportValue] = []
-                while i < res2.count {
-                    let aver = (res1[i]["value"].doubleValue + res2[i]["value"].doubleValue)/2
-                    let date = NSDate(timeIntervalSince1970: res2[i]["clock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate())))
-                    response.append(ReportValue(val: aver, clock: date))
-                    i += step
-                }
-                if handler != nil {
-                    handler!(error: nil, result: response)
-                }
+                handler!(error: nil, result: response)
             }
         }
+        
     }
     
     //MARK: - Private Methods
-    
-    private func _freshTempFor300Serv(handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        let params = [
-            "output": "extend",
-            "history": 0,
-            "itemids": ["23663", "23664"],
-            "sortfield": "clock",
-            "sortorder": "DESC",
-            "limit": 2
-        ]
-        performRequestForMethod(.GetHistory, withParams: params, handler: handler)
-    }
-    
-    private func _getItemHistory(itemid: String, fromTimestamp from_time: String, handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        let params : [String: AnyObject] = [
-            "output": "extend",
-            "history": 0,
-            "itemids": itemid,
-            "sortfield": "clock",
-            "sortorder": "DESC",
-            "time_from": from_time
-        ]
-        performRequestForMethod(.GetHistory, withParams: params, handler: handler)
-    }
     
     private enum APIMethod : String {
         case Login = "user.login"
@@ -214,16 +140,47 @@ class ZabbixManager {
         case GetItem = "item.get"
     }
     
-    private func performRequestForMethod(method: APIMethod, withParams params: [String: AnyObject], handler: ((error: NSError?, result: JSON?) -> Void)?) {
-        var parameters: [String: AnyObject] = [
+    private func performRequestForAuthentificatedMethod(method: APIMethod, withParams params: [String: AnyObject], handler: ((error: NSError?, result: JSON?) -> Void)?) {
+        
+        guard ZabbixConfiguration.isValid else {
+            if handler != nil {
+                handler!(error: NSError(domain: zbxErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid Zabbix configuration. Check preferences."]), result: nil)
+            }
+            return
+        }
+        
+        guard token != nil else {
+            let _params = [
+                "user": ZabbixConfiguration.username!,
+                "password": ZabbixConfiguration.password!
+            ]
+            
+            performRequestForMethod(.Login,
+                                    withParams: _params,
+                                    handler:
+                { [unowned self] (loginError: NSError?, loginResult: JSON?) in
+                    if loginError != nil {
+                        if handler != nil {
+                            handler!(error: loginError!, result: nil)
+                        }
+                    }
+                    else {
+                        self.token = loginResult!.stringValue
+                        self.performRequestForAuthentificatedMethod(method, withParams: params, handler: handler)
+                    }
+                }
+            )
+            return
+        }
+        
+        let parameters: Dictionary<String, AnyObject> = [
             "jsonrpc": "2.0",
             "method": method.rawValue,
             "params": params,
-            "id": 1
+            "id": 1,
+            "auth": token!
         ]
-        if ((token != nil)&&(method != .Login)) {
-            parameters["auth"] = token!
-        }
+        
         netManager.request(.POST, restURL!, parameters: parameters, encoding: .JSON).responseSWJSON() { [unowned self] (res: Response<JSON, NSError>) in
             let reqError = res.result.error
             guard reqError == nil else {
@@ -251,7 +208,55 @@ class ZabbixManager {
                 }
             }
         }
+        
     }
     
+    private func performRequestForMethod(method: APIMethod, withParams params: [String: AnyObject], handler: ((error: NSError?, result: JSON?) -> Void)?) {
+        
+        guard ZabbixConfiguration.isValid else {
+            if handler != nil {
+                handler!(error: NSError(domain: zbxErrorDomain, code: -1, userInfo: [NSLocalizedDescriptionKey: "Invalid Zabbix configuration. Check preferences."]), result: nil)
+            }
+            return
+        }
+        
+        let parameters: [String: AnyObject] = [
+            "jsonrpc": "2.0",
+            "method": method.rawValue,
+            "params": params,
+            "id": 1
+        ]
+        
+        netManager.request(.POST, restURL!, parameters: parameters, encoding: .JSON).responseSWJSON() { [unowned self] (res: Response<JSON, NSError>) in
+            let reqError = res.result.error
+            guard reqError == nil else {
+                if handler != nil {
+                    handler!(error: reqError!, result: nil)
+                }
+                return
+            }
+            let json = res.result.value!
+            let jsonError = json["error"]
+            guard jsonError == nil else {
+                if handler != nil {
+                    handler!(error: NSError(domain: self.zbxErrorDomain, code: jsonError["code"].int!, userInfo: [NSLocalizedDescriptionKey: jsonError["data"].string!]), result: nil)
+                }
+                return
+            }
+            let jsonResult = json["result"]
+            if handler != nil {
+                handler!(error: nil,  result:jsonResult)
+                // if method == .Login {
+                //     self.token = jsonResult.stringValue
+                //     handler!(error: nil, result: js)
+                // }
+                // else {
+                //     handler!(error: nil, result: jsonResult)
+                // }
+            }
+        }
+        
+    }
+
 }
 

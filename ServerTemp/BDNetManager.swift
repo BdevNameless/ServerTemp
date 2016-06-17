@@ -43,9 +43,14 @@ extension Request {
 class BDNetManager: Alamofire.Manager {
     
     static var sharedManager: BDNetManager = {
-        let serverTrustPolicies: [String: ServerTrustPolicy] = [
-            "192.168.5.27": .DisableEvaluation
-        ]
+        var serverTrustPolicies: [String: ServerTrustPolicy] = [:]
+        if let address = ZabbixConfiguration.serverAddress {
+            serverTrustPolicies[address] = .DisableEvaluation
+        }
+//        let serverTrustPolicies: [String: ServerTrustPolicy] = [
+//            "192.168.5.27": .DisableEvaluation,
+//            "zabbix.viveya.local": .DisableEvaluation
+//        ]
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
         config.HTTPAdditionalHeaders = Alamofire.Manager.defaultHTTPHeaders
         let manager = BDNetManager(
