@@ -776,27 +776,9 @@
                                                     <color key="textColor" red="0.50196081400000003" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
-                                                <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="Oid-rg-dLr">
-                                                    <rect key="frame" x="457" y="7" width="137" height="31"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="133" id="gCh-91-dED"/>
-                                                    </constraints>
-                                                    <color key="minimumTrackTintColor" red="0.50196081400000003" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <color key="maximumTrackTintColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
-                                                </slider>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="6q0-vd-g4i">
-                                                    <rect key="frame" x="409" y="11" width="42" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="Oid-rg-dLr" secondAttribute="trailing" id="BQu-QG-uv2"/>
-                                                <constraint firstItem="6q0-vd-g4i" firstAttribute="centerY" secondItem="f7W-Pj-6hZ" secondAttribute="centerY" id="JLP-vR-T6x"/>
-                                                <constraint firstItem="Oid-rg-dLr" firstAttribute="leading" secondItem="6q0-vd-g4i" secondAttribute="trailing" constant="8" id="ObF-XG-hc3"/>
                                                 <constraint firstItem="h9s-Lc-sQL" firstAttribute="centerY" secondItem="f7W-Pj-6hZ" secondAttribute="centerY" id="RUD-rI-AHF"/>
-                                                <constraint firstItem="Oid-rg-dLr" firstAttribute="centerY" secondItem="f7W-Pj-6hZ" secondAttribute="centerY" id="XjH-D9-2xf"/>
                                                 <constraint firstAttribute="leadingMargin" secondItem="h9s-Lc-sQL" secondAttribute="leading" id="pKP-w3-q7B"/>
                                             </constraints>
                                         </tableViewCellContentView>
@@ -805,8 +787,28 @@
                                             <outlet property="label" destination="h9s-Lc-sQL" id="fpb-XA-Cdl"/>
                                         </connections>
                                     </tableViewCell>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SwitchCell" rowHeight="160" id="pCk-ct-4Yz" customClass="SwitchCell" customModule="ServerTemp" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="143" width="600" height="160"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pCk-ct-4Yz" id="9fh-gZ-12X">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="159.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2Hy-gd-47F">
+                                                    <rect key="frame" x="8" y="0.0" width="584" height="159.5"/>
+                                                </pickerView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailingMargin" secondItem="2Hy-gd-47F" secondAttribute="trailing" id="MXV-30-5O9"/>
+                                                <constraint firstItem="2Hy-gd-47F" firstAttribute="top" secondItem="9fh-gZ-12X" secondAttribute="topMargin" constant="-8" id="Vfb-Xn-qVe"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="2Hy-gd-47F" secondAttribute="bottom" constant="-8" id="uyg-Ex-VJe"/>
+                                                <constraint firstAttribute="leadingMargin" secondItem="2Hy-gd-47F" secondAttribute="leading" id="zJD-Pd-xe4"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                        <color key="backgroundColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    </tableViewCell>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SwitchCell" id="nio-yK-1dM" customClass="SwitchCell" customModule="ServerTemp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="143" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="303" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="nio-yK-1dM" id="Dfe-J5-OQH">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
@@ -851,7 +853,7 @@
                             <tableViewSection headerTitle="Уведомления" id="c7E-cA-884">
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" indentationWidth="10" reuseIdentifier="SwitchCell" id="oIl-6b-zmB" customClass="SwitchCell" customModule="ServerTemp" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="237" width="600" height="44"/>
+                                        <rect key="frame" x="0.0" y="397" width="600" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="oIl-6b-zmB" id="CMS-Jh-bpl">
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="43.5"/>
@@ -899,6 +901,10 @@
                             <outlet property="delegate" destination="ll5-kT-7bi" id="vcm-Jl-N7V"/>
                         </connections>
                     </tableView>
+                    <connections>
+                        <outlet property="fetchCell" destination="nio-yK-1dM" id="7XD-D6-wIO"/>
+                        <outlet property="notifCell" destination="oIl-6b-zmB" id="32v-n7-vHj"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="6um-Mr-uP4" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

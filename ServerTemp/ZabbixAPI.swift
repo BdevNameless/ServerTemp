@@ -11,22 +11,23 @@ import Alamofire
 import SwiftyJSON
 
 
-class ReportValue: CustomStringConvertible {
+struct ReportValue: CustomStringConvertible {
     
     var value: Double? = nil
     var date: NSDate? = nil
+    var itemid: String? = nil
 
     var description: String {
         return "Record(value: \(value), date: \(date))"
     }
     
-    init(val: Double?, clock: NSDate?) {
-        value = val
-        date = clock
-    }
+//    init(val: Double?, clock: NSDate?) {
+//        value = val
+//        date = clock
+//    }
 }
 
-class ZabbixHost: CustomStringConvertible {
+struct ZabbixHost: CustomStringConvertible {
     
     var hostid: String
     var hostname: String
@@ -38,13 +39,13 @@ class ZabbixHost: CustomStringConvertible {
         return "Zabbix Host(hostid: \(hostid), hostname: \(hostname), snmp_available: \(snmp_available), available: \(available), status: \(status))"
     }
     
-    init(hostid: String, hostname: String, snmp: Bool, available: Int, status: Int) {
-        self.hostid = hostid
-        self.hostname = hostname
-        snmp_available = snmp
-        self.available = available
-        self.status = status
-    }
+//    init(hostid: String, hostname: String, snmp: Bool, available: Int, status: Int) {
+//        self.hostid = hostid
+//        self.hostname = hostname
+//        snmp_available = snmp
+//        self.available = available
+//        self.status = status
+//    }
 }
 
 class ZabbixManager {
@@ -79,10 +80,10 @@ class ZabbixManager {
     func getItemReportsByIDs(ids: [String]?, withHostIDs hostids: [String]?, handler: ((error: NSError?, result: [String: ReportValue]?) -> Void)?) {
         var params: [String: AnyObject] = ["output": "extend"]
         if ids != nil {
-            params["itemids"] = ids
+            params["itemids"] = ids!
         }
         if hostids != nil {
-            params["hostids"] = hostids
+            params["hostids"] = hostids!
         }
         performRequestForAuthentificatedMethod(.GetItem, withParams: params) { (error, result) in
             guard error == nil else {
@@ -95,7 +96,7 @@ class ZabbixManager {
             let asArray = result!.arrayValue
             for item in asArray {
                 let key = item["itemid"].stringValue
-                let report = ReportValue(val: item["lastvalue"].doubleValue, clock: NSDate(timeIntervalSince1970: item["lastclock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))))
+                let report = ReportValue(value: item["lastvalue"].doubleValue, date: NSDate(timeIntervalSince1970: item["lastclock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))), itemid: item["itemid"].stringValue)
                 response[key] = report
             }
             if handler != nil {
@@ -104,13 +105,39 @@ class ZabbixManager {
         }
     }
     
+    func getHistoryByIDs(itemids: [String]?, withFilter filter: [String: AnyObject]?, handler: ((error: NSError?, result: [ReportValue]?) -> Void)?) {
+        var params: [String: AnyObject] = ["output": "extend", "sortfield": ["itemid", "clock"], "sortorder": "DESC"]
+        if itemids != nil {
+            params["itemids"] = itemids!
+        }
+        if filter != nil {
+            params["filter"] = filter!
+        }
+        performRequestForAuthentificatedMethod(.GetHistory, withParams: params) { (error, result) in
+            guard error != nil else {
+                if handler != nil {
+                    handler!(error: error, result: nil)
+                }
+                return
+            }
+            
+            if handler != nil {
+                var response: [ReportValue] = []
+                for report in result!.arrayValue {
+                    response.append(ReportValue(value: report["value"].doubleValue, date: NSDate(timeIntervalSince1970: report["clock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))), itemid: report["itemid"].stringValue))
+                }
+                handler!(error: nil, result: response)
+            }
+        }
+    }
+    
     func getHostsByIDs(hostids: [String]?, withFilter filter: [String: AnyObject]?, handler: ((error: NSError?, result: [ZabbixHost]?) -> Void)?) {
         var params: [String: AnyObject] = ["output": "extend", "sortfield": "name", "sortorder": "ASC", "with_monitored_items": true]
         if hostids != nil {
-            params["hostids"] = hostids
+            params["hostids"] = hostids!
         }
         if filter != nil {
-            params["filter"] = filter
+            params["filter"] = filter!
         }
         performRequestForAuthentificatedMethod(.GetHost, withParams: params) { (error, result) in
             guard error == nil else {
@@ -123,7 +150,7 @@ class ZabbixManager {
                 var response: [ZabbixHost] = []
                 print(result!.arrayValue)
                 for host in result!.arrayValue {
-                    response.append(ZabbixHost(hostid: host["hostid"].stringValue, hostname: host["name"].stringValue, snmp: host["snmp_available"].boolValue, available: host["available"].intValue, status: host["status"].intValue))
+                    response.append(ZabbixHost(hostid: host["hostid"].stringValue, hostname: host["name"].stringValue, snmp_available: host["snmp_available"].boolValue, available: host["available"].intValue, status: host["status"].intValue))
                 }
                 handler!(error: nil, result: response)
             }
@@ -246,13 +273,6 @@ class ZabbixManager {
             let jsonResult = json["result"]
             if handler != nil {
                 handler!(error: nil,  result:jsonResult)
-                // if method == .Login {
-                //     self.token = jsonResult.stringValue
-                //     handler!(error: nil, result: js)
-                // }
-                // else {
-                //     handler!(error: nil, result: jsonResult)
-                // }
             }
         }
         

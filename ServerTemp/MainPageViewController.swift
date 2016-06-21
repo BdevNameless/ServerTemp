@@ -61,6 +61,11 @@ class MainPageViewController: UIViewController {
         updateData()
     }
     
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        zbxManager.cancelCurrentRequest()
+    }
+    
     //MARK: - Setup
     override func preferredStatusBarStyle() -> UIStatusBarStyle {
         return .LightContent
@@ -88,21 +93,17 @@ class MainPageViewController: UIViewController {
     
     //MARK: - Private methods
     
-    private func checkVPNUsage() {
-
-    }
-    
     private func updateData() {
-        if progressHUD != nil {
-            view.addSubview(progressHUD!)
-            progressHUD!.removeFromSuperViewOnHide = true
-            progressHUD!.show(true)
-        }
-        let fetchQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
+//        if progressHUD != nil {
+//            view.addSubview(progressHUD!)
+//            progressHUD!.removeFromSuperViewOnHide = true
+//            progressHUD!.show(true)
+//        }
+//        let fetchQueue = dispatch_get_global_queue(QOS_CLASS_USER_INTERACTIVE, 0)
 //        let fetchGroup = dispatch_group_create()
 //        var freshResult: [String: ReportValue]? = nil
 //        var historyResult: [ReportValue]? = nil
-        dispatch_async(fetchQueue) { [unowned self] in
+//        dispatch_async(fetchQueue) { [unowned self] in
 //            dispatch_group_enter(fetchGroup)
 //            self.zbxManager.getFresh300Report() { (fetchError: NSError?, result: [String: ReportValue]?) in
 //                if fetchError != nil {
@@ -115,27 +116,27 @@ class MainPageViewController: UIViewController {
 //                }
 //                dispatch_group_leave(fetchGroup)
 //            }
-            self.zbxManager.getItemReportsByIDs(["23663", "23664"], withHostIDs: nil, handler: { [unowned self] (fetchError: NSError?, result: [String: ReportValue]?) in
-                if fetchError != nil {
-                    dispatch_async(dispatch_get_main_queue()) { [unowned self] in
-                        if self.progressHUD != nil {
-                            self.progressHUD!.hide(true)
-                        }
-                        self.showAlertForError(fetchError!)
-                    }
-                }
-                if result != nil {
-                    dispatch_async(dispatch_get_main_queue()) { [unowned self] in
-                        if self.progressHUD != nil {
-                            self.progressHUD!.hide(true)
-                        }
-                        self.temp23663 = result!["23663"]
-                        self.temp23664 = result!["23664"]
-                    }
-                }
-                
+//            self.zbxManager.getItemReportsByIDs(["23663", "23664"], withHostIDs: nil, handler: { [unowned self] (fetchError: NSError?, result: [String: ReportValue]?) in
+//                if fetchError != nil {
+//                    dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+//                        if self.progressHUD != nil {
+//                            self.progressHUD!.hide(true)
+//                        }
+//                        self.showAlertForError(fetchError!)
+//                    }
+//                }
+//                if result != nil {
+//                    dispatch_async(dispatch_get_main_queue()) { [unowned self] in
+//                        if self.progressHUD != nil {
+//                            self.progressHUD!.hide(true)
+//                        }
+//                        self.temp23663 = result!["23663"]
+//                        self.temp23664 = result!["23664"]
+//                    }
+//                }
+            
 //                dispatch_group_leave(fetchGroup)
-            })
+//            })
 //            dispatch_group_enter(fetchGroup)
 //            self.zbxManager.get300History(10) { (fetchError: NSError?, result: [ReportValue]?) in
 //                if fetchError != nil {
@@ -169,7 +170,7 @@ class MainPageViewController: UIViewController {
 //                    self.updateLabelsWithData(historyResult!)
 //                }
 //            }
-        }
+//        }
     }
     
     private func updateLabelsWithData(report: [ReportValue]) {
