@@ -60,6 +60,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func updateFirstRunFlag() {
         NSUserDefaults.standardUserDefaults().setBool(true, forKey: "firstRun")
+        NSUserDefaults.standardUserDefaults().setInteger(3, forKey: "historyValue")
+//        NSUserDefaults.standardUserDefaults().setInteger(0, forKey: "historyUnits")
         NSUserDefaults.standardUserDefaults().synchronize()
     }
     

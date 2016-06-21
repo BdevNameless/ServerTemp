@@ -33,6 +33,8 @@
 		11C23E551C0FFD30000D2C81 /* SwitchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E541C0FFD30000D2C81 /* SwitchCell.swift */; };
 		11C23E571C0FFD3E000D2C81 /* ButtonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E561C0FFD3E000D2C81 /* ButtonCell.swift */; };
 		11C23E591C0FFD6A000D2C81 /* DisclosureCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */; };
+		11F09AE61D18E4F2009E8B1E /* PickerCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F09AE51D18E4F2009E8B1E /* PickerCell.swift */; };
+		11F09AE81D19156E009E8B1E /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F09AE71D19156E009E8B1E /* Utils.swift */; };
 		11F0D0A11C151C66004D5F55 /* ZabbixAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */; };
 		F250CC307916A3BBFF83E192 /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30FF75A38604C3C4E3EFA18B /* Pods.framework */; };
 /* End PBXBuildFile section */
@@ -90,6 +92,8 @@
 		11C23E541C0FFD30000D2C81 /* SwitchCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwitchCell.swift; sourceTree = "<group>"; };
 		11C23E561C0FFD3E000D2C81 /* ButtonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonCell.swift; sourceTree = "<group>"; };
 		11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DisclosureCell.swift; sourceTree = "<group>"; };
+		11F09AE51D18E4F2009E8B1E /* PickerCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PickerCell.swift; sourceTree = "<group>"; };
+		11F09AE71D19156E009E8B1E /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZabbixAPI.swift; sourceTree = "<group>"; };
 		1B7C98F0DE8C72E1D369175D /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		30FF75A38604C3C4E3EFA18B /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -210,6 +214,7 @@
 				11C23E561C0FFD3E000D2C81 /* ButtonCell.swift */,
 				11C23E581C0FFD6A000D2C81 /* DisclosureCell.swift */,
 				11A592BF1D13E6D5007D7922 /* SensorCell.swift */,
+				11F09AE51D18E4F2009E8B1E /* PickerCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -219,6 +224,7 @@
 			children = (
 				11F0D0A01C151C66004D5F55 /* ZabbixAPI.swift */,
 				1167314D1C17A2F900E4919E /* BDNetManager.swift */,
+				11F09AE71D19156E009E8B1E /* Utils.swift */,
 			);
 			name = Common;
 			sourceTree = "<group>";
@@ -489,6 +495,7 @@
 				113FD13B1C0E72C000A4551E /* TestConnectionViewController.swift in Sources */,
 				11B8F7EC1C28E44B000CE221 /* TempLabel.swift in Sources */,
 				11C23E531C0FFABA000D2C81 /* VPNSettingsViewController.swift in Sources */,
+				11F09AE61D18E4F2009E8B1E /* PickerCell.swift in Sources */,
 				11344D021C0D234B0049F287 /* VPNConfiguration.swift in Sources */,
 				11A592C01D13E6D5007D7922 /* SensorCell.swift in Sources */,
 				11344D071C0D335D0049F287 /* InputCell.swift in Sources */,
@@ -496,6 +503,7 @@
 				11C23E4F1C0EA141000D2C81 /* MainMenuController.swift in Sources */,
 				11B8F7EA1C28E367000CE221 /* MainPageViewController.swift in Sources */,
 				11C23E511C0FB4E4000D2C81 /* MenuCell.swift in Sources */,
+				11F09AE81D19156E009E8B1E /* Utils.swift in Sources */,
 				11C23E591C0FFD6A000D2C81 /* DisclosureCell.swift in Sources */,
 				11C23E571C0FFD3E000D2C81 /* ButtonCell.swift in Sources */,
 				11344D041C0D31630049F287 /* SettingsViewController.swift in Sources */,
