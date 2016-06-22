@@ -13,9 +13,9 @@ import SwiftyJSON
 
 struct ReportValue: CustomStringConvertible {
     
-    var value: Double? = nil
-    var date: NSDate? = nil
-    var itemid: String? = nil
+    let value: Double
+    let date: NSDate
+    let itemid: String
 
     var description: String {
         return "Record(value: \(value), date: \(date))"
@@ -27,13 +27,26 @@ struct ReportValue: CustomStringConvertible {
 //    }
 }
 
+struct ZabbixItem: CustomStringConvertible {
+    let itemid: String
+    let name: String
+    let units: String
+    let lastClock: NSDate
+    let lastValue: Double
+    
+    var description: String {
+        return "Zabbix Item (itemid: \(itemid), name: \(name), units: \(units), lastclock: \(lastClock), lastValue: \(lastValue))"
+    }
+    
+}
+
 struct ZabbixHost: CustomStringConvertible {
     
-    var hostid: String
-    var hostname: String
-    var snmp_available: Bool
-    var available: Int
-    var status: Int
+    let hostid: String
+    let hostname: String
+    let snmp_available: Bool
+    let available: Int
+    let status: Int
     
     var description: String {
         return "Zabbix Host(hostid: \(hostid), hostname: \(hostname), snmp_available: \(snmp_available), available: \(available), status: \(status))"
@@ -77,13 +90,13 @@ class ZabbixManager {
         }
     }
     
-    func getItemReportsByIDs(ids: [String]?, withHostIDs hostids: [String]?, handler: ((error: NSError?, result: [String: ReportValue]?) -> Void)?) {
+    func getItemReportsByIDs(itemids: [String]?, withFilter filter: [String: AnyObject]?, handler: ((error: NSError?, result: [String: ReportValue]?) -> Void)?) {
         var params: [String: AnyObject] = ["output": "extend"]
-        if ids != nil {
-            params["itemids"] = ids!
+        if itemids != nil {
+            params["itemids"] = itemids!
         }
-        if hostids != nil {
-            params["hostids"] = hostids!
+        if filter != nil {
+            params["filter"] = filter!
         }
         performRequestForAuthentificatedMethod(.GetItem, withParams: params) { (error, result) in
             guard error == nil else {
@@ -125,6 +138,31 @@ class ZabbixManager {
                 var response: [ReportValue] = []
                 for report in result!.arrayValue {
                     response.append(ReportValue(value: report["value"].doubleValue, date: NSDate(timeIntervalSince1970: report["clock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))), itemid: report["itemid"].stringValue))
+                }
+                handler!(error: nil, result: response)
+            }
+        }
+    }
+    
+    func getItemsByIDs(itemids: [String]?, withFilter filter: [String: AnyObject]?, handler: ((error: NSError?, result: [ZabbixItem]?) -> Void)?) {
+        var params: [String: AnyObject] = ["output": "extend", "sortfield": "name", "sortorder": "ASC"]
+        if itemids != nil {
+            params["itemids"] = itemids!
+        }
+        if filter != nil {
+            params["filter"] = filter!
+        }
+        performRequestForAuthentificatedMethod(.GetItem, withParams: params) { (error, result) in
+            guard error == nil else {
+                if handler != nil {
+                    handler!(error: error, result: nil)
+                }
+                return
+            }
+            if handler != nil {
+                var response: [ZabbixItem] = []
+                for item in result!.arrayValue {
+                    response.append(ZabbixItem(itemid: item["itemid"].stringValue, name: item["name"].stringValue, units: item["units"].stringValue, lastClock: NSDate(timeIntervalSince1970: item["lastclock"].doubleValue).dateByAddingTimeInterval(Double(NSTimeZone.systemTimeZone().secondsFromGMTForDate(NSDate()))), lastValue: item["lastvalue"].doubleValue))
                 }
                 handler!(error: nil, result: response)
             }
